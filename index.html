@@ -2,22 +2,21 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SmartQueue - Integrated System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-        .phone-frame { width: 375px; height: 812px; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
+        .phone-frame { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; background-color: white; }
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body class="flex justify-center items-center min-h-screen p-4 overflow-hidden relative">
+<body class="flex justify-center items-start min-h-screen">
 
-    <!-- Notifikasi & Call Modal (Sama seperti sebelumnya) -->
     <div id="push-notification" class="fixed top-6 right-6 w-80 bg-white rounded-2xl shadow-2xl border-l-8 border-[#22c55e] p-4 flex gap-3 transform transition-all duration-500 translate-x-[150%] z-[100]">
         <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-[#22c55e] shrink-0"><i class="fas fa-bell text-lg"></i></div>
         <div><h4 class="text-sm font-bold text-slate-800 mb-1">SmartQueue Update</h4><p id="notif-message" class="text-xs text-slate-500 leading-relaxed"></p></div>
@@ -36,72 +35,62 @@
         </div>
     </div>
 
-    <!-- Splash Screen -->
-    <div id="splash-interface" class="phone-frame bg-white rounded-[40px] shadow-2xl border-8 border-slate-800 overflow-hidden flex flex-col relative transition-all duration-300">
-        <div class="w-full bg-white text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium"><span>9:41</span><div class="flex gap-1.5 items-center"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full text-sm"></i></div></div>
+    <div id="splash-interface" class="phone-frame overflow-hidden flex flex-col transition-all duration-300">
+    
         <div class="flex-1 flex flex-col items-center justify-center p-8">
             <div class="w-24 h-24 bg-[#1e3a8a] text-white rounded-3xl flex items-center justify-center mb-6 transform rotate-12 shadow-lg"><i class="fas fa-layer-group text-5xl -rotate-12"></i></div>
             <h1 class="text-2xl font-black text-[#1e3a8a] tracking-tight mb-20 uppercase">SmartQueue</h1>
-            <button onclick="gotoAuthScreen()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-sm py-4 rounded-2xl shadow-md mb-4">Login Warga</button>
+            <button onclick="gotoAuthScreen()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-sm py-4 rounded-2xl shadow-md mb-4">Login</button>
             <button onclick="bukaModalPin()" class="text-sm text-slate-500 hover:text-[#1e3a8a] underline font-medium">login sebagai petugas</button>
         </div>
     </div>
 
-    <!-- Auth Screen -->
-    <div id="auth-interface" class="hidden phone-frame bg-white rounded-[40px] shadow-2xl border-8 border-slate-800 overflow-hidden flex flex-col relative transition-all duration-300">
-        <div class="w-full bg-white text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium"><span>9:41</span><div class="flex gap-1.5 items-center"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div></div>
+    <div id="auth-interface" class="hidden phone-frame overflow-hidden flex flex-col transition-all duration-300">
         <div class="flex-1 flex flex-col p-8">
             <button onclick="backToSplash()" class="self-start text-slate-400 hover:text-[#1e3a8a] mb-6 text-sm font-medium"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
             <div class="mb-8">
                 <h2 id="auth-title" class="text-2xl font-black text-[#1e3a8a] tracking-tight">Login Akun</h2>
-                <p id="auth-subtitle" class="text-xs text-slate-500 mt-1">Gunakan Email: jeco@binus.edu | Pass: 123</p>
-                <p id="auth-error" class="text-xs text-red-500 font-bold mt-2 hidden"></p>
+                <p id="auth-subtitle" class="text-xs text-slate-500 mt-1">Gunakan Email bebas & Pass (min 6 char)</p>
+                <p id="auth-error" class="text-xs text-red-500 font-bold mt-2 hidden bg-red-50 p-2 rounded"></p>
             </div>
             <div class="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl shadow-sm mb-6">
                 <div id="nama-container" class="hidden mb-3">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Nama Lengkap</label>
-                    <input type="text" id="auth-nama" placeholder="Masukkan nama" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none">
+                    <input type="text" id="auth-nama" placeholder="Masukkan nama" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
                 </div>
                 <div class="mb-3">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Email Address</label>
-                    <input type="email" id="auth-email" placeholder="contoh@email.com" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none">
+                    <input type="email" id="auth-email" onkeyup="validasiInputAuthLokal()" placeholder="contoh@email.com" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
                 </div>
                 <div class="mb-5">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Password</label>
-                    <input type="password" id="auth-pass" placeholder="••••••••" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none">
+                    <input type="password" id="auth-pass" onkeyup="validasiInputAuthLokal()" placeholder="••••••••" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
                 </div>
-                <button onclick="submitLoginWarga()" id="btn-login-submit" class="w-full bg-[#1e3a8a] text-white font-bold text-sm py-3.5 rounded-xl shadow-md">Sign-In</button>
+                <button onclick="submitLoginWarga()" id="btn-login-submit" class="w-full bg-[#1e3a8a] text-white font-bold text-sm py-3.5 rounded-xl shadow-md disabled:opacity-50 transition-all">Login</button>
             </div>
-            <div class="mt-auto text-center">
-                <button onclick="toggleAuthMode()" id="text-toggle-auth" class="text-xs text-slate-500 font-medium">Belum punya akun? <span class="font-bold underline">Daftar di sini</span></button>
+            <div class="mt-auto text-center pb-6">
+                <button onclick="toggleAuthMode()" id="text-toggle-auth" class="text-xs text-slate-500 font-medium">Belum punya akun? <span class="font-bold underline text-[#1e3a8a]">Daftar di sini</span></button>
             </div>
         </div>
     </div>
 
-    <!-- Warga Interface -->
-    <div id="warga-interface" class="hidden phone-frame bg-slate-50 rounded-[40px] shadow-2xl border-8 border-slate-800 overflow-hidden flex flex-col relative transition-all duration-300">
-        <div class="w-full bg-slate-50 text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium"><span>9:41</span><div class="flex gap-1.5 items-center"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div></div>
-
-        <!-- Sidebar Warga (Fitur 2 Aktif) -->
+    <div id="warga-interface" class="hidden phone-frame bg-slate-50 overflow-hidden flex flex-col transition-all duration-300">
         <div id="warga-sidebar" class="absolute inset-y-0 left-0 w-64 bg-white shadow-2xl transform translate-x-[-100%] transition-transform duration-300 z-50 flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center pt-12">
                 <span class="font-black text-[#1e3a8a] tracking-wider">MENU</span>
                 <button onclick="toggleSidebarWarga()" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div class="flex-1 p-4 flex flex-col gap-2">
-                <button class="w-full text-left px-4 py-3 text-sm font-bold text-[#1e3a8a] bg-blue-50 rounded-xl"><i class="fas fa-home w-6"></i> Beranda</button>
-                <button class="w-full text-left px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl"><i class="fas fa-history w-6"></i> Riwayat Tiket</button>
-                <button class="w-full text-left px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl"><i class="fas fa-cog w-6"></i> Pengaturan</button>
-            </div>
-            <div class="p-6 border-t border-slate-100">
-                <button onclick="logoutWarga()" class="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 font-bold py-3 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout Akun</button>
+                <button onclick="toggleSidebarWarga()" class="w-full text-left px-4 py-3 text-sm font-bold text-[#1e3a8a] bg-blue-50 rounded-xl"><i class="fas fa-home w-6"></i> Beranda</button>
+                <button onclick="bukaModalRiwayat()" class="w-full text-left px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl"><i class="fas fa-history w-6"></i> Riwayat Tiket</button>
+                <button onclick="bukaModalSettings()" class="w-full text-left px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl"><i class="fas fa-cog w-6"></i> Pengaturan</button>
             </div>
         </div>
 
         <div id="warga-home" class="flex-1 flex flex-col p-6 overflow-y-auto relative">
             <div class="flex justify-between items-center mb-4">
                 <button onclick="toggleSidebarWarga()"><i class="fas fa-bars text-slate-600 text-lg"></i></button>
-                <div class="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"><i class="fas fa-user text-slate-500 text-xs"></i></div>
+                <button onclick="bukaModalProfil()" class="w-9 h-9 rounded-full bg-blue-100 border-2 border-[#1e3a8a] flex items-center justify-center hover:scale-105 transition-transform"><i class="fas fa-user text-[#1e3a8a] text-sm"></i></button>
             </div>
 
             <div class="mb-6">
@@ -131,7 +120,7 @@
 
             <div id="action-antrean-container"></div>
 
-            <div id="tiket-aktif-container" class="hidden mt-4">
+            <div id="tiket-aktif-container" class="hidden mt-4 pb-10">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-xs font-bold text-[#22c55e] uppercase tracking-wider block"><i class="fas fa-circle-dot animate-pulse mr-1"></i> Tiket Aktif Anda</span>
                     <button onclick="batalkanAntreanSaya()" class="text-[11px] text-red-500 hover:text-red-700 font-bold underline"><i class="fas fa-trash-can text-[10px] mr-1"></i>Batalkan Tiket</button>
@@ -146,8 +135,8 @@
             </div>
         </div>
 
-        <div id="warga-tiket" class="hidden flex-1 flex flex-col p-6 justify-center bg-slate-50 relative">
-            <button onclick="kembaliKeHomeWarga()" class="absolute top-10 left-6 text-slate-500"><i class="fas fa-arrow-left"></i></button>
+        <div id="warga-tiket" class="hidden flex-1 flex flex-col p-6 justify-center bg-slate-50 relative pt-16">
+            <button onclick="kembaliKeHomeWarga()" class="absolute top-12 left-6 text-slate-500"><i class="fas fa-arrow-left"></i></button>
             <div class="bg-[#1e3a8a] rounded-t-3xl rounded-b-xl p-8 pt-12 flex flex-col items-center text-center shadow-xl mt-8">
                 <span class="text-xs font-medium text-blue-200 mb-1">Nomor Antrian Anda</span>
                 <h1 id="tiket-nomor-id" class="text-6xl font-black text-white tracking-tight mb-8">A-00</h1>
@@ -159,8 +148,50 @@
         </div>
     </div>
 
-    <!-- PIN Modal -->
-    <div id="pin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+    <div id="profil-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-[300] p-4">
+        <div class="bg-white rounded-[32px] p-6 w-full max-w-sm shadow-2xl relative">
+            <button onclick="tutupModalProfil()" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+            <h4 class="text-xl font-black text-[#1e3a8a] mb-4">Profil Saya</h4>
+            <div class="mb-4">
+                <label class="text-[10px] font-bold text-slate-500 uppercase">Nama Lengkap</label>
+                <input type="text" id="edit-nama" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:border-[#1e3a8a] focus:outline-none mb-3">
+                <label class="text-[10px] font-bold text-slate-500 uppercase">Email</label>
+                <input type="email" id="edit-email" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:border-[#1e3a8a] focus:outline-none">
+            </div>
+            <p id="profil-error" class="text-xs text-red-500 font-bold mb-3 hidden"></p>
+            <p id="profil-sukses" class="text-xs text-emerald-500 font-bold mb-3 hidden">Profil berhasil diupdate!</p>
+            <div class="flex flex-col gap-2">
+                <button onclick="simpanProfil()" class="w-full bg-[#1e3a8a] text-white font-bold text-sm py-3 rounded-xl shadow">Simpan Perubahan</button>
+                <button onclick="logoutWarga()" class="w-full bg-red-50 text-red-600 font-bold text-sm py-3 rounded-xl">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="riwayat-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-[300] p-4">
+        <div class="bg-white rounded-[32px] p-6 w-full max-w-sm shadow-2xl relative h-[70vh] flex flex-col">
+            <button onclick="tutupModalRiwayat()" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+            <h4 class="text-xl font-black text-[#1e3a8a] mb-4"><i class="fas fa-history mr-2"></i>Riwayat Tiket</h4>
+            <div id="list-riwayat" class="flex-1 overflow-y-auto space-y-3 pr-2">
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-[300] p-4">
+        <div class="bg-white rounded-[32px] p-6 w-full max-w-sm shadow-2xl relative text-center">
+            <button onclick="tutupModalSettings()" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+            <div class="w-16 h-16 bg-blue-50 text-[#1e3a8a] rounded-2xl flex items-center justify-center mx-auto mb-4"><i class="fas fa-info-circle text-3xl"></i></div>
+            <h4 class="text-lg font-black text-slate-800 mb-1">Tentang SmartQueue</h4>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Aplikasi sistem antrean terintegrasi real-time. Didesain khusus untuk memudahkan pelayanan publik di berbagai instansi.</p>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-left mb-4">
+                <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Pusat Bantuan</span>
+                <p class="text-xs text-slate-700 font-semibold"><i class="fab fa-whatsapp text-emerald-500 mr-2"></i> +62 812 3456 7890</p>
+                <p class="text-xs text-slate-700 font-semibold mt-1"><i class="fas fa-envelope text-red-500 mr-2"></i> support@smartqueue.id</p>
+            </div>
+            <span class="text-[10px] text-slate-400 font-medium">Versi 1.0.0</span>
+        </div>
+    </div>
+
+    <div id="pin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-[400] p-4">
         <div class="bg-white rounded-3xl p-8 w-full max-w-sm text-center shadow-2xl">
             <h4 class="text-xl font-bold text-slate-800 mb-2">Login Petugas</h4>
             <input type="text" id="pin-input" placeholder="MASUKKAN PIN" class="w-full text-center text-lg font-bold uppercase tracking-widest px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#1e3a8a] mb-1">
@@ -178,7 +209,6 @@
         </div>
     </div>
 
-    <!-- Petugas Interface -->
     <div id="petugas-interface" class="hidden w-full max-w-6xl bg-slate-50 text-slate-800 rounded-[32px] shadow-2xl overflow-hidden h-[720px] flex transition-all duration-300 border border-slate-200">
         <aside class="w-64 bg-[#1e3a8a] flex flex-col">
             <div class="h-20 flex items-center px-6 gap-3 border-b border-blue-800/50">
@@ -221,7 +251,6 @@
 
                 <div class="col-span-1 flex flex-col gap-4">
                     <button onclick="panggilAntreanBerikutnya()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-black text-sm py-5 rounded-xl shadow-lg">PANGGIL ANTRIAN BERIKUTNYA</button>
-                    <!-- Tombol Toggle Loket (Fitur 3) -->
                     <button id="btn-toggle-loket" onclick="toggleStatusLoket()" class="w-full bg-red-100 text-red-600 font-bold text-sm py-3 rounded-xl hover:bg-red-200 transition-colors">TUTUP LOKET SEMENTARA</button>
                 </div>
             </div>
@@ -240,6 +269,8 @@
         let tiketWargaSaya = null; 
         let currentActiveStaffInstansi = null; 
         let currentUserNama = "";
+        let currentUserEmail = "";
+        let riwayatAntrean = []; 
 
         socket.on('updateData', (serverData) => {
             instansiDatabase = serverData;
@@ -247,6 +278,21 @@
             if (!document.getElementById('warga-interface').classList.contains('hidden')) updateLivePreviewUI();
             if (currentActiveStaffInstansi !== null) updateDashboardUI();
         });
+
+        function validasiInputAuthLokal() {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            const btn = document.getElementById('btn-login-submit');
+            const err = document.getElementById('auth-error');
+            
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let isValidEmail = re.test(String(email).toLowerCase());
+            let isValidPass = pass.length >= 6;
+
+            if (email.length > 0 && !isValidEmail) { err.innerText = "Format email belum valid"; err.classList.remove('hidden'); btn.disabled = true; }
+            else if (pass.length > 0 && !isValidPass) { err.innerText = "Password kurang dari 6 huruf"; err.classList.remove('hidden'); btn.disabled = true; }
+            else { err.classList.add('hidden'); btn.disabled = false; }
+        }
 
         function submitLoginWarga() {
             const email = document.getElementById('auth-email').value;
@@ -268,6 +314,7 @@
             const errorText = document.getElementById('auth-error');
             if(res.sukses) {
                 currentUserNama = res.nama;
+                currentUserEmail = res.email;
                 document.getElementById('warga-nama-display').innerText = "Hello, " + currentUserNama;
                 errorText.classList.add('hidden');
                 document.getElementById('auth-interface').classList.add('hidden');
@@ -278,6 +325,63 @@
                 errorText.classList.remove('hidden');
             }
         });
+
+        function bukaModalProfil() {
+            document.getElementById('edit-nama').value = currentUserNama;
+            document.getElementById('edit-email').value = currentUserEmail;
+            document.getElementById('profil-error').classList.add('hidden');
+            document.getElementById('profil-sukses').classList.add('hidden');
+            document.getElementById('profil-modal').classList.remove('hidden');
+        }
+        function tutupModalProfil() { document.getElementById('profil-modal').classList.add('hidden'); }
+        
+        function simpanProfil() {
+            const newNama = document.getElementById('edit-nama').value;
+            const newEmail = document.getElementById('edit-email').value;
+            socket.emit('updateProfil', { oldEmail: currentUserEmail, newNama, newEmail });
+        }
+
+        socket.on('updateProfilResponse', (res) => {
+            if(res.sukses) {
+                currentUserNama = res.nama;
+                currentUserEmail = res.email;
+                document.getElementById('warga-nama-display').innerText = "Hello, " + currentUserNama;
+                document.getElementById('profil-error').classList.add('hidden');
+                document.getElementById('profil-sukses').classList.remove('hidden');
+                setTimeout(() => tutupModalProfil(), 1500);
+            } else {
+                document.getElementById('profil-error').innerText = res.pesan;
+                document.getElementById('profil-error').classList.remove('hidden');
+            }
+        });
+
+        function bukaModalRiwayat() {
+            toggleSidebarWarga();
+            const list = document.getElementById('list-riwayat');
+            list.innerHTML = "";
+            if (riwayatAntrean.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 text-center mt-10">Belum ada riwayat tiket.</p>`;
+            } else {
+                riwayatAntrean.forEach(item => {
+                    let color = item.status === 'Selesai' ? 'text-emerald-500' : 'text-red-500';
+                    let bg = item.status === 'Selesai' ? 'bg-emerald-50' : 'bg-red-50';
+                    list.innerHTML += `
+                    <div class="border border-slate-100 rounded-xl p-4 shadow-sm flex justify-between items-center ${bg}">
+                        <div>
+                            <h5 class="text-[10px] font-bold text-slate-500 uppercase">${item.instansi}</h5>
+                            <h2 class="text-xl font-black text-slate-800">${item.id}</h2>
+                        </div>
+                        <span class="text-xs font-bold ${color}">${item.status}</span>
+                    </div>`;
+                });
+            }
+            document.getElementById('riwayat-modal').classList.remove('hidden');
+        }
+        function tutupModalRiwayat() { document.getElementById('riwayat-modal').classList.add('hidden'); }
+
+        function bukaModalSettings() { toggleSidebarWarga(); document.getElementById('settings-modal').classList.remove('hidden'); }
+        function tutupModalSettings() { document.getElementById('settings-modal').classList.add('hidden'); }
+
 
         function validasiPinPetugas() {
             const inputPin = document.getElementById('pin-input').value.trim().toUpperCase();
@@ -298,7 +402,6 @@
             }
         });
 
-     
         function toggleSidebarWarga() {
             const sidebar = document.getElementById('warga-sidebar');
             if(sidebar.classList.contains('translate-x-[-100%]')) {
@@ -309,7 +412,6 @@
                 sidebar.classList.add('translate-x-[-100%]');
             }
         }
-
         
         function toggleStatusLoket() {
             if(currentActiveStaffInstansi) socket.emit('toggleLoket', currentActiveStaffInstansi);
@@ -334,6 +436,7 @@
 
         function batalkanAntreanSaya() {
             if(!tiketWargaSaya) return;
+            riwayatAntrean.unshift({ id: tiketWargaSaya.formattedId, instansi: tiketWargaSaya.instansi, status: "Dibatalkan" });
             socket.emit('batalAntrean', { instansi: tiketWargaSaya.instansi, formattedId: tiketWargaSaya.formattedId });
             tiketWargaSaya = null;
             cekStatusAntreanUI();
@@ -354,7 +457,6 @@
             }
         }
 
-        
         function updateLivePreviewUI() {
             let instansi = document.getElementById('pilihan-instansi').value;
             let data = instansiDatabase[instansi];
@@ -362,15 +464,12 @@
 
             document.getElementById('preview-now').innerText = "A-" + data.nomorSekarang;
             document.getElementById('preview-sisa').innerText = data.listMenunggu.length + " Org";
-            
-            
             document.getElementById('preview-waktu').innerText = (data.listMenunggu.length * data.avgTime) + " Mnt";
 
             let btnContainer = document.getElementById('action-antrean-container');
             if(tiketWargaSaya !== null) {
                 btnContainer.innerHTML = `<button disabled class="w-full bg-slate-200 text-slate-500 rounded-2xl p-4 text-[11px] font-bold cursor-not-allowed border border-slate-300">⚠️ Anda memiliki antrean aktif di ${tiketWargaSaya.instansi}</button>`;
             } else if (data.isTutup) {
-                
                 btnContainer.innerHTML = `<button disabled class="w-full bg-red-100 text-red-500 rounded-2xl p-5 text-sm font-bold cursor-not-allowed border border-red-200 shadow-sm"><i class="fas fa-store-slash mr-2"></i>LOKET SEDANG TUTUP</button>`;
             } else {
                 btnContainer.innerHTML = `<button onclick="ambilAntreanSekarang()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all flex flex-col items-center justify-center gap-1"><span class="text-base font-bold tracking-wide">AMBIL ANTRIAN SEKARANG</span><span class="text-[11px] font-medium text-blue-200">Konfirmasi data & buat tiket</span></button>`;
@@ -401,17 +500,22 @@
             });
         }
 
-        
         function gotoAuthScreen() { document.getElementById('splash-interface').classList.add('hidden'); document.getElementById('auth-interface').classList.remove('hidden'); }
         function backToSplash() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
-        function logoutWarga() { tiketWargaSaya = null; toggleSidebarWarga(); document.getElementById('warga-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
+        function logoutWarga() { 
+            tiketWargaSaya = null; 
+            currentUserNama = ""; 
+            currentUserEmail = "";
+            tutupModalProfil();
+            document.getElementById('warga-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); 
+        }
         function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
             document.getElementById('auth-title').innerText = isSignUpMode ? 'Buat Akun Baru' : 'Login Akun';
-            document.getElementById('auth-subtitle').innerText = isSignUpMode ? 'Lengkapi data untuk daftar.' : 'Gunakan Email: jeco@binus.edu | Pass: 123';
+            document.getElementById('auth-subtitle').innerText = isSignUpMode ? 'Lengkapi data untuk daftar.' : 'Gunakan Email bebas & Pass (min 6 char)';
             document.getElementById('nama-container').classList.toggle('hidden', !isSignUpMode);
             document.getElementById('btn-login-submit').innerText = isSignUpMode ? 'Daftar Akun' : 'Sign-In';
-            document.getElementById('text-toggle-auth').innerHTML = isSignUpMode ? 'Sudah punya akun? <span class="font-bold underline">Sign-In di sini</span>' : 'Belum punya akun? <span class="font-bold underline">Daftar di sini</span>';
+            document.getElementById('text-toggle-auth').innerHTML = isSignUpMode ? 'Sudah punya akun? <span class="font-bold underline text-[#1e3a8a]">Login di sini</span>' : 'Belum punya akun? <span class="font-bold underline text-[#1e3a8a]">Daftar di sini</span>';
         }
         function renderInstansiSesuaiWilayah() {
             let w = document.getElementById('pilihan-wilayah').value; let d = document.getElementById('pilihan-instansi'); d.innerHTML = "";
@@ -429,7 +533,15 @@
         function logoutKeSplash() { document.getElementById('petugas-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); currentActiveStaffInstansi = null; }
         function tampilkanPushNotif(msg) { document.getElementById('notif-message').innerText = msg; const notif = document.getElementById('push-notification'); notif.classList.remove('translate-x-[150%]'); setTimeout(() => { notif.classList.add('translate-x-[150%]'); }, 5000); }
         function tampilkanGiantModal(nomor) { const modal = document.getElementById('call-modal'); const content = document.getElementById('call-modal-content'); document.getElementById('call-modal-nomor').innerText = nomor; modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); modal.classList.add('opacity-100'); content.classList.remove('scale-0'); content.classList.add('scale-100'); }, 50); }
-        function konfirmasiKedatangan() { const modal = document.getElementById('call-modal'); const content = document.getElementById('call-modal-content'); modal.classList.remove('opacity-100'); modal.classList.add('opacity-0'); content.classList.remove('scale-100'); content.classList.add('scale-0'); setTimeout(() => { modal.classList.add('hidden'); tiketWargaSaya = null; cekStatusAntreanUI(); }, 300); }
+        function konfirmasiKedatangan() { 
+            const modal = document.getElementById('call-modal'); const content = document.getElementById('call-modal-content'); modal.classList.remove('opacity-100'); modal.classList.add('opacity-0'); content.classList.remove('scale-100'); content.classList.add('scale-0'); 
+            setTimeout(() => { 
+                modal.classList.add('hidden'); 
+                riwayatAntrean.unshift({ id: tiketWargaSaya.formattedId, instansi: tiketWargaSaya.instansi, status: "Selesai" });
+                tiketWargaSaya = null; 
+                cekStatusAntreanUI(); 
+            }, 300); 
+        }
     </script>
 </body>
 </html>

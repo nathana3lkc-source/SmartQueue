@@ -28,26 +28,59 @@ let wargaDatabase = [
     { nama: "Jeco", email: "jeco@binus.edu", password: "123" }
 ];
 
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+}
+
 io.on('connection', (socket) => {
     console.log('User terhubung:', socket.id);
     socket.emit('updateData', instansiDatabase);
 
     socket.on('registerWarga', (data) => {
+        if (!validateEmail(data.email)) {
+            return socket.emit('authResponse', { sukses: false, pesan: "Format email tidak valid (Harus pakai @)!" });
+        }
+        if (!data.password || data.password.length < 6) {
+            return socket.emit('authResponse', { sukses: false, pesan: "Password minimal 6 karakter!" });
+        }
+
         let exists = wargaDatabase.find(u => u.email === data.email);
         if(exists) {
             socket.emit('authResponse', { sukses: false, pesan: "Email sudah terdaftar!" });
         } else {
             wargaDatabase.push({ nama: data.nama, email: data.email, password: data.password });
-            socket.emit('authResponse', { sukses: true, nama: data.nama });
+            socket.emit('authResponse', { sukses: true, nama: data.nama, email: data.email });
         }
     });
 
     socket.on('loginWarga', (data) => {
+        if (!validateEmail(data.email)) {
+            return socket.emit('authResponse', { sukses: false, pesan: "Format email salah!" });
+        }
+        if (!data.password || data.password.length < 6) {
+            return socket.emit('authResponse', { sukses: false, pesan: "Password minimal 6 karakter!" });
+        }
+
         let user = wargaDatabase.find(u => u.email === data.email && u.password === data.password);
         if(user) {
-            socket.emit('authResponse', { sukses: true, nama: user.nama });
+            socket.emit('authResponse', { sukses: true, nama: user.nama, email: user.email });
         } else {
             socket.emit('authResponse', { sukses: false, pesan: "Email atau Password salah!" });
+        }
+    });
+
+    socket.on('updateProfil', (data) => {
+        let userIndex = wargaDatabase.findIndex(u => u.email === data.oldEmail);
+        if (userIndex !== -1) {
+            if (!validateEmail(data.newEmail)) {
+                return socket.emit('updateProfilResponse', { sukses: false, pesan: "Email baru tidak valid!" });
+            }
+            wargaDatabase[userIndex].nama = data.newNama;
+            wargaDatabase[userIndex].email = data.newEmail;
+            socket.emit('updateProfilResponse', { sukses: true, nama: data.newNama, email: data.newEmail });
+        } else {
+            socket.emit('updateProfilResponse', { sukses: false, pesan: "User tidak ditemukan!" });
         }
     });
 
