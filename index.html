@@ -143,7 +143,7 @@
             <h4 class="text-sm font-bold text-slate-800 mb-2">1. Pilih Instansi Layanan</h4>
             <div class="bg-white border border-slate-200 rounded-xl p-2 shadow-sm mb-4">
                 <select id="pilihan-instansi" onchange="updateLivePreviewUI()" class="w-full bg-transparent text-sm font-semibold text-slate-700 py-2.5 px-2 focus:outline-none cursor-pointer">
-                    </select>
+                </select>
             </div>
 
             <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-6">
@@ -280,25 +280,98 @@
         </main>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
 
     <script>
-        let instansiDatabase = {
-            "Puskesmas Kebon Jeruk": { nomorSekarang: 24, totalDilayani: 87, listMenunggu: [{id:"A-25", waktu:"10:00 AM"}, {id:"A-26", waktu:"10:05 AM"}, {id:"A-27", waktu:"10:10 AM"}] },
-            "Kelurahan Kemanggisan": { nomorSekarang: 12, totalDilayani: 45, listMenunggu: [{id:"A-13", waktu:"09:12 AM"}] },
-            "Dinas Dukcapil": { nomorSekarang: 5, totalDilayani: 22, listMenunggu: [{id:"A-6", waktu:"08:30 AM"}, {id:"A-7", waktu:"08:42 AM"}, {id:"A-8", waktu:"08:50 AM"}] },
-            "Puskesmas Kebayoran Baru": { nomorSekarang: 4, totalDilayani: 12, listMenunggu: [] },
-            "Dukcapil Jakarta Selatan": { nomorSekarang: 33, totalDilayani: 112, listMenunggu: [{id:"A-34", waktu:"11:15 AM"}] }
-        };
+        // Koneksi ke Backend
+        const socket = io();
 
+        // State Lokal
+        let instansiDatabase = {}; 
         let instansiPerWilayah = {
             "Jakbar": ["Puskesmas Kebon Jeruk", "Kelurahan Kemanggisan", "Dinas Dukcapil"],
             "Jaksel": ["Puskesmas Kebayoran Baru", "Dukcapil Jakarta Selatan"]
         };
-
         let isSignUpMode = false;
         let tiketWargaSaya = null; 
         let currentActiveStaffInstansi = null; 
 
+        // --- MENDENGARKAN EVENT DARI BACKEND ---
+        
+        // 1. Terima update data instansi dari server
+        socket.on('updateData', (serverData) => {
+            instansiDatabase = serverData;
+            
+            // LOGIK BARU PENYELAMAT DROPDOWN BLANK
+            if (document.getElementById('pilihan-instansi').innerHTML.trim() === "") {
+                renderInstansiSesuaiWilayah();
+            }
+            
+            // Refresh UI secara real-time di kedua belah pihak
+            if (!document.getElementById('warga-interface').classList.contains('hidden')) {
+                updateLivePreviewUI();
+            }
+            if (currentActiveStaffInstansi !== null) {
+                updateDashboardUI();
+            }
+        });
+
+        // 2. Terima tiket yang berhasil digenerate dari server
+        socket.on('tiketDikonfirmasi', (tiketBaru) => {
+            tiketWargaSaya = tiketBaru;
+            document.getElementById('tiket-nomor-id').innerText = tiketBaru.formattedId;
+            document.getElementById('tiket-instansi-nama').innerText = tiketBaru.instansi;
+            document.getElementById('warga-home').classList.add('hidden');
+            document.getElementById('warga-tiket').classList.remove('hidden');
+            updateLivePreviewUI();
+        });
+
+        // 3. Terima trigger ada nomor yang sedang dipanggil petugas
+        socket.on('nomorDipanggil', (infoPanggilan) => {
+            cekNotifikasiCerdas(infoPanggilan.instansi, infoPanggilan.nomorSekarang);
+        });
+
+        // --- FUNGSI WARGA MENGIRIM KE BACKEND ---
+        function ambilAntreanSekarang() {
+            let instansi = document.getElementById('pilihan-instansi').value;
+            let waktuSkrg = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            socket.emit('ambilAntrean', { instansi: instansi, waktuSkrg: waktuSkrg });
+        }
+
+        function batalkanAntreanSaya() {
+            if(!tiketWargaSaya) return;
+            socket.emit('batalAntrean', { instansi: tiketWargaSaya.instansi, formattedId: tiketWargaSaya.formattedId });
+            tiketWargaSaya = null;
+            cekStatusAntreanUI();
+        }
+
+        // --- FUNGSI PETUGAS MENGIRIM KE BACKEND ---
+        function panggilAntreanBerikutnya() {
+            if (instansiDatabase[currentActiveStaffInstansi].listMenunggu.length > 0) {
+                socket.emit('panggilBerikutnya', currentActiveStaffInstansi);
+            } else {
+                alert("Tidak ada antrean warga yang menunggu!");
+            }
+        }
+
+        // --- LOGIKA NOTIFIKASI REAL-TIME ---
+        function cekNotifikasiCerdas(instansiDipanggil, nomorSekarangInstansi) {
+            if (tiketWargaSaya !== null && tiketWargaSaya.instansi === instansiDipanggil) {
+                let jarakAntrean = tiketWargaSaya.idNum - nomorSekarangInstansi;
+                
+                if (jarakAntrean === 3) {
+                    tampilkanPushNotif(`Giliran Anda tinggal 3 antrean lagi! Silakan bersiap.`);
+                } 
+                else if (jarakAntrean === 1) { 
+                    tampilkanPushNotif(`🔔 Sisa antrean: 0 orang! Mohon segera bersiap di depan pintu Loket.`);
+                }
+                else if (jarakAntrean === 0) { 
+                    tampilkanGiantModal(tiketWargaSaya.formattedId);
+                }
+            }
+        }
+
+        // --- UI UTILITY FUNCTIONS ---
         function gotoAuthScreen() { document.getElementById('splash-interface').classList.add('hidden'); document.getElementById('auth-interface').classList.remove('hidden'); }
         function backToSplash() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
         function submitLoginWarga() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('warga-interface').classList.remove('hidden'); renderInstansiSesuaiWilayah(); }
@@ -338,37 +411,13 @@
             }
         }
 
-        function ambilAntreanSekarang() {
-            let instansi = document.getElementById('pilihan-instansi').value;
-            let data = instansiDatabase[instansi];
-            let nextIdNum = data.nomorSekarang + 1 + data.listMenunggu.length;
-            let formattedId = "A-" + nextIdNum;
-            let waktuSkrg = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            data.listMenunggu.push({ id: formattedId, waktu: waktuSkrg });
-            tiketWargaSaya = { instansi: instansi, idNum: nextIdNum, formattedId: formattedId };
-            
-            document.getElementById('tiket-nomor-id').innerText = formattedId;
-            document.getElementById('tiket-instansi-nama').innerText = instansi;
-            document.getElementById('warga-home').classList.add('hidden');
-            document.getElementById('warga-tiket').classList.remove('hidden');
-            updateLivePreviewUI();
-        }
-
-        function batalkanAntreanSaya() {
-            if(!tiketWargaSaya) return;
-            let data = instansiDatabase[tiketWargaSaya.instansi];
-            data.listMenunggu = data.listMenunggu.filter(item => item.id !== tiketWargaSaya.formattedId);
-            tiketWargaSaya = null;
-            cekStatusAntreanUI();
-        }
-
         function kembaliKeHomeWarga() {
             document.getElementById('warga-tiket').classList.add('hidden');
             document.getElementById('warga-home').classList.remove('hidden');
             cekStatusAntreanUI();
         }
 
+        /* Perbaikan bug double script */
         function bukaLayarTiketLagi() {
             if(tiketWargaSaya) {
                 document.getElementById('warga-home').classList.add('hidden');
@@ -413,67 +462,22 @@
             document.getElementById('splash-interface').classList.remove('hidden');
         }
 
-        function panggilAntreanBerikutnya() {
-            let data = instansiDatabase[currentActiveStaffInstansi];
-            if (data.listMenunggu.length > 0) {
-                let antreanDipanggil = data.listMenunggu.shift();
-                data.nomorSekarang = parseInt(antreanDipanggil.id.split("-")[1]);
-                data.totalDilayani++;
-                
-                updateDashboardUI();
-                cekNotifikasiCerdas(data.nomorSekarang); 
-            } else {
-                alert("Tidak ada antrean warga yang menunggu di instansi ini!");
-            }
-        }
-
-        function cekNotifikasiCerdas(nomorSekarangInstansi) {
-            if (tiketWargaSaya !== null && tiketWargaSaya.instansi === currentActiveStaffInstansi) {
-                let jarakAntrean = tiketWargaSaya.idNum - nomorSekarangInstansi;
-                
-                if (jarakAntrean === 3) {
-                    tampilkanPushNotif(`Giliran Anda tinggal 3 antrean lagi! Silakan bersiap.`);
-                } 
-                else if (jarakAntrean === 1) { 
-                    tampilkanPushNotif(`🔔 Sisa antrean: 0 orang! Mohon segera bersiap di depan pintu Loket.`);
-                }
-                else if (jarakAntrean === 0) { 
-                    tampilkanGiantModal(tiketWargaSaya.formattedId);
-                }
-            }
-        }
-
-        function tampilkanPushNotif(pesan) {
-            const notif = document.getElementById('push-notification');
-            document.getElementById('notif-message').innerText = pesan;
-            notif.classList.remove('translate-x-[150%]');
-            setTimeout(() => { notif.classList.add('translate-x-[150%]'); }, 6000);
-        }
-
         function tampilkanGiantModal(nomor) {
             const modal = document.getElementById('call-modal');
             const content = document.getElementById('call-modal-content');
-            
             document.getElementById('call-modal-nomor').innerText = nomor;
             modal.classList.remove('hidden');
-            
             setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.classList.add('opacity-100');
-                content.classList.remove('scale-0');
-                content.classList.add('scale-100');
+                modal.classList.remove('opacity-0'); modal.classList.add('opacity-100');
+                content.classList.remove('scale-0'); content.classList.add('scale-100');
             }, 50);
         }
 
         function konfirmasiKedatangan() {
             const modal = document.getElementById('call-modal');
             const content = document.getElementById('call-modal-content');
-            
-            modal.classList.remove('opacity-100');
-            modal.classList.add('opacity-0');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-0');
-            
+            modal.classList.remove('opacity-100'); modal.classList.add('opacity-0');
+            content.classList.remove('scale-100'); content.classList.add('scale-0');
             setTimeout(() => {
                 modal.classList.add('hidden');
                 tiketWargaSaya = null; 
@@ -492,14 +496,8 @@
             const tbody = document.getElementById('dash-tabel-body');
             tbody.innerHTML = "";
             data.listMenunggu.forEach(item => {
-                tbody.innerHTML += `
-                    <tr class="border-b border-slate-100">
-                        <td class="p-3 font-bold text-slate-800">${item.id}</td>
-                        <td class="p-3 text-slate-500">${item.waktu}</td>
-                        <td class="p-3 text-right"><span class="bg-amber-100 text-amber-600 font-bold text-[10px] px-2.5 py-1 rounded-full">Menunggu</span></td>
-                    </tr>`;
+                tbody.innerHTML += `<tr class="border-b border-slate-100"><td class="p-3 font-bold text-slate-800">${item.id}</td><td class="p-3 text-slate-500">${item.waktu}</td><td class="p-3 text-right"><span class="bg-amber-100 text-amber-600 font-bold text-[10px] px-2.5 py-1 rounded-full">Menunggu</span></td></tr>`;
             });
-            updateLivePreviewUI();
         }
     </script>
 </body>
