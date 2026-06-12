@@ -3,577 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartQueue - Interactive Demo System</title>
-    <!-- Tailwind CSS CDN -->
+    <title>SmartQueue - Integrated System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Background abu-abu muda ala mockup presentasi */
         }
-        /* Custom scrollbar styling for dashboard */
-        ::-webkit-scrollbar {
-            width: 6px;
+        .phone-frame {
+            width: 375px;
+            height: 812px; /* Proporsi standar iPhone X/11 */
         }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3b82f6;
-        }
+        /* Custom Scrollbar untuk Desktop Dashboard */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+<body class="flex justify-center items-center min-h-screen p-4 overflow-hidden relative">
 
-    <!-- Top Global Controller Bar -->
-    <header class="bg-slate-900/90 border-b border-slate-800 px-6 py-4 flex flex-wrap gap-4 items-center justify-between sticky top-0 z-40 backdrop-blur-md">
-        <div class="flex items-center gap-3">
-            <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-lg shadow-blue-500/20">
-                <i class="fa-solid fa-layer-group text-xl animate-pulse"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-sky-400 bg-clip-text text-transparent">SmartQueue</h1>
-                <p class="text-xs text-slate-400">Interactive Simulation Workspace • Sprint 1 & 2</p>
-            </div>
-        </div>
-
-        <!-- Connection State Controller (Sangat penting untuk demo offline-first!) -->
-        <div class="flex items-center gap-4 bg-slate-950 p-2 rounded-2xl border border-slate-800 shadow-inner">
-            <span class="text-xs font-semibold text-slate-400 ml-2">SIMULATOR JARINGAN:</span>
-            <button id="networkToggleBtn" onclick="toggleNetwork()" class="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-4 py-1.5 rounded-xl text-sm font-semibold hover:bg-emerald-500/20 transition-all shadow-md">
-                <i class="fa-solid fa-wifi" id="wifiIcon"></i>
-                <span id="networkText">ONLINE (CONNECTED)</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Interactive Workspace -->
-    <main class="flex-grow p-6 grid grid-cols-1 xl:grid-cols-12 gap-6 max-w-7xl mx-auto w-full">
-
-        <!-- ================= LEFT COLUMN: CITIZEN MOBILE APP SIMULATION (5/12 COLS) ================= -->
-        <section class="xl:col-span-5 flex flex-col items-center">
-            <div class="w-full max-w-[390px] bg-slate-900 border-[8px] border-slate-800 rounded-[48px] overflow-hidden shadow-2xl relative aspect-[9/19] flex flex-col ring-4 ring-slate-800/50">
-                
-                <!-- Phone Top Notch -->
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 bg-slate-800 h-6 w-32 rounded-b-2xl z-50 flex items-center justify-center">
-                    <div class="w-12 h-1 bg-slate-950 rounded-full mb-1"></div>
-                </div>
-
-                <!-- Phone Internal Screen Header -->
-                <div class="bg-blue-600 pt-8 pb-4 px-6 text-white flex justify-between items-center relative">
-                    <div>
-                        <p class="text-[10px] text-blue-200 uppercase font-bold tracking-wider">Aplikasi Antrean</p>
-                        <h2 class="text-lg font-bold">SmartQueue Mobile</h2>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <!-- Network Indicator in phone -->
-                        <span id="phoneNetworkBadge" class="flex h-2 w-2 relative">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <span id="phoneNetworkText" class="text-xs text-blue-100 font-semibold">Online</span>
-                    </div>
-                </div>
-
-                <!-- Phone Content Area -->
-                <div class="flex-grow p-5 flex flex-col justify-between bg-slate-950 overflow-y-auto">
-                    
-                    <!-- Input Section -->
-                    <div class="space-y-4 mt-2">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Instansi Layanan</label>
-                            <div class="relative">
-                                <select id="instansiSelect" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-200 font-medium cursor-pointer appearance-none">
-                                    <option value="Samsat Jakarta Selatan">Samsat Jakarta Selatan</option>
-                                    <option value="Puskesmas Tebet">Puskesmas Kebayoran Baru</option>
-                                    <option value="Kelurahan Pancoran">Kelurahan Senayan</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Poli / Layanan Loket</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="selectPoli('A', 'Layanan Umum')" id="poliA" class="poli-btn p-3 bg-blue-600/10 border border-blue-500/30 text-blue-400 rounded-xl font-semibold text-xs flex flex-col items-center gap-1.5 transition-all">
-                                    <i class="fa-solid fa-user-doctor text-base"></i>
-                                    <span>Poli Umum (A)</span>
-                                </button>
-                                <button onclick="selectPoli('B', 'Layanan Khusus')" id="poliB" class="poli-btn p-3 bg-slate-900 border border-slate-800 text-slate-400 rounded-xl font-semibold text-xs flex flex-col items-center gap-1.5 transition-all">
-                                    <i class="fa-solid fa-wheelchair text-base"></i>
-                                    <span>Poli Lansia/KIA (B)</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Ticket Generator Section -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 my-4 flex flex-col items-center text-center relative overflow-hidden min-h-[160px] justify-center">
-                        <div id="ticketEmptyState" class="space-y-2">
-                            <div class="text-slate-600 text-3xl"><i class="fa-solid fa-ticket"></i></div>
-                            <p class="text-xs text-slate-400 max-w-[200px] mx-auto">Silakan klik tombol di bawah untuk menerbitkan tiket antrean baru.</p>
-                        </div>
-
-                        <div id="ticketActiveState" class="hidden space-y-2 w-full">
-                            <span id="ticketSyncStatus" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                <i class="fa-solid fa-circle-check"></i> Cloud Sync
-                            </span>
-                            <p class="text-xs text-slate-400 font-semibold" id="ticketInstansi">Samsat Jaksel</p>
-                            <h3 class="text-4xl font-extrabold text-blue-400 tracking-wider" id="ticketNumber">A-00</h3>
-                            <div class="flex justify-between items-center border-t border-slate-800/80 pt-2 px-2 text-[10px] text-slate-400">
-                                <div>
-                                    <p>Sisa Antrean</p>
-                                    <p class="font-bold text-slate-200 text-xs" id="ticketQueueCount">0 Orang</p>
-                                </div>
-                                <div class="text-right">
-                                    <p>Estimasi Waktu</p>
-                                    <p class="font-bold text-slate-200 text-xs" id="ticketEstTime">~ Menit</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CTA Button -->
-                    <button id="getTicketBtn" onclick="generateTicket()" class="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white rounded-2xl font-bold text-sm shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-circle-plus"></i> Ambil Antrean Sekarang
-                    </button>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= RIGHT COLUMN: STAFF DASHBOARD & SYSTEM MONITOR (7/12 COLS) ================= -->
-        <section class="xl:col-span-7 space-y-6">
-            
-            <!-- Dashboard Main Controller -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-blue-500/5 h-24 w-24 rounded-full filter blur-2xl"></div>
-                
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <span class="bg-blue-500/10 text-blue-400 text-[10px] font-bold px-2.5 py-1 rounded-full border border-blue-500/20 uppercase tracking-wider">Dashboard Petugas Loket</span>
-                        <h2 class="text-2xl font-bold mt-1">Sistem Panggilan</h2>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xs text-slate-400">Pilihan Loket</p>
-                        <span class="font-bold text-blue-400"><i class="fa-solid fa-desktop mr-1.5"></i> Loket Utama 1</span>
-                    </div>
-                </div>
-
-                <!-- Call Area Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Current Active Number -->
-                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Melayani Nomor Antrean</p>
-                        <div class="my-4">
-                            <h1 class="text-6xl font-extrabold text-emerald-400 tracking-wider" id="activeCounter">NONE</h1>
-                            <p class="text-xs text-slate-500 mt-2" id="activeCategory">-</p>
-                        </div>
-                        <div class="flex justify-center gap-2 mt-2">
-                            <!-- Button Call Next -->
-                            <button id="callBtn" onclick="callQueue()" class="flex-grow py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10 active:scale-95 transition-all">
-                                <i class="fa-solid fa-volume-high"></i> PANGGIL SEKARANG
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Actions Controller -->
-                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Kontrol Antrean</p>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="finishActive()" class="py-3 px-3 bg-blue-600/10 border border-blue-500/20 text-blue-400 hover:bg-blue-600/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-circle-check"></i> Selesai
-                                </button>
-                                <button onclick="skipActive()" class="py-3 px-3 bg-rose-600/10 border border-rose-500/20 text-rose-400 hover:bg-rose-600/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-circle-xmark"></i> Lewati
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-slate-800/80 pt-4 mt-4">
-                            <div class="flex justify-between text-xs text-slate-400 mb-2">
-                                <span>Antrean Pending:</span>
-                                <span class="font-bold text-slate-200" id="pendingCount">0 Tiket</span>
-                            </div>
-                            <div class="flex justify-between text-xs text-slate-400">
-                                <span>Total Terselesaikan:</span>
-                                <span class="font-bold text-slate-200" id="completedCount">0 Tiket</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pending Database & Sync Manager Logs (Ini wow factor terpenting!) -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-database text-blue-400 text-sm"></i>
-                        <h3 class="font-bold text-base">Local Database Monitor (:LocalDB)</h3>
-                    </div>
-                    <span class="text-[10px] bg-slate-800 px-2.5 py-1 rounded-full font-bold text-slate-400 uppercase">Simulasi IndexedDB</span>
-                </div>
-
-                <!-- Database Queue List -->
-                <div class="overflow-x-auto border border-slate-800/60 rounded-xl max-h-[140px] overflow-y-auto mb-4">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-950 text-slate-400 uppercase font-bold sticky top-0 z-10 border-b border-slate-800">
-                            <tr>
-                                <th class="p-3">ID Tiket</th>
-                                <th class="p-3">Instansi</th>
-                                <th class="p-3 text-center">Status</th>
-                                <th class="p-3 text-center">Sync Log</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dbTableBody" class="divide-y divide-slate-800/40 text-slate-300">
-                            <tr>
-                                <td colspan="4" class="p-4 text-center text-slate-500">Belum ada antrean masuk di LocalDB.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Live SyncManager Console -->
-                <div class="bg-black/50 border border-slate-800 rounded-xl p-4 font-mono text-[11px] text-slate-400 space-y-1">
-                    <p class="text-blue-400 font-bold mb-1.5 flex items-center gap-1.5">
-                        <i class="fa-solid fa-terminal text-xs"></i> SYNC_MANAGER CONSOLE LOGS:
-                    </p>
-                    <div id="consoleLogs" class="space-y-1 max-h-[80px] overflow-y-auto">
-                        <p class="text-slate-500">[System] SyncManager berhasil dionisiasi.</p>
-                        <p class="text-slate-500">[System] Mendengarkan perubahan jaringan lokal...</p>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- Custom Toast / Notification -->
-    <div id="customToast" class="fixed bottom-6 right-6 bg-slate-900 border border-slate-800 text-slate-100 px-4 py-3.5 rounded-2xl shadow-2xl transition-all duration-300 transform translate-y-24 opacity-0 flex items-center gap-3 z-50 max-w-sm">
-        <div id="toastIcon" class="text-emerald-400 text-lg">
-            <i class="fa-solid fa-circle-check"></i>
+    <div id="push-notification" class="fixed top-6 right-6 w-80 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] border-l-8 border-[#22c55e] p-4 flex gap-3 transform transition-all duration-500 translate-x-[150%] z-[100]">
+        <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-[#22c55e] shrink-0">
+            <i class="fas fa-bell text-lg"></i>
         </div>
         <div>
-            <p id="toastMessage" class="text-xs font-semibold">Berhasil memproses aksi!</p>
+            <h4 class="text-sm font-bold text-slate-800 mb-1">SmartQueue Reminder</h4>
+            <p id="notif-message" class="text-xs text-slate-500 leading-relaxed">Giliran Anda tinggal 3 antrean lagi! Silakan bersiap menuju area loket.</p>
         </div>
     </div>
 
-    <!-- Core Application Logic -->
-    <script>
-        // State Global Aplikasi
-        let queueData = [];
-        let currentActiveId = null;
-        let isOnline = true;
-        let selectedPrefix = 'A';
-        let selectedCategoryName = 'Layanan Umum';
+    <div id="login-interface" class="phone-frame bg-white rounded-[40px] shadow-2xl border-8 border-slate-800 overflow-hidden flex flex-col relative transition-all duration-300">
+        <div class="w-full bg-white text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium">
+            <span>9:41</span>
+            <div class="flex gap-1.5 items-center">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full text-sm"></i>
+            </div>
+        </div>
 
-        // Inisialisasi awal poli-button
-        selectPoli('A', 'Layanan Umum');
+        <div class="flex-1 flex flex-col items-center justify-center p-8">
+            <div class="w-24 h-24 bg-[#1e3a8a] text-white rounded-3xl flex items-center justify-center mb-6 transform rotate-12 shadow-lg">
+                <i class="fas fa-layer-group text-5xl -rotate-12"></i>
+            </div>
+            <h1 class="text-2xl font-black text-[#1e3a8a] tracking-tight mb-20 uppercase">SmartQueue</h1>
 
-        // Fungsi Simulasi Jaringan (Online/Offline Toggle)
-        function toggleNetwork() {
-            isOnline = !isOnline;
-            const btn = document.getElementById('networkToggleBtn');
-            const wifiIcon = document.getElementById('wifiIcon');
-            const networkText = document.getElementById('networkText');
+            <button onclick="loginWarga()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-sm py-4 rounded-2xl shadow-md transition-all mb-4">
+                Login
+            </button>
             
-            const phoneBadge = document.getElementById('phoneNetworkBadge');
-            const phoneText = document.getElementById('phoneNetworkText');
+            <button onclick="bukaModalPin()" class="text-sm text-slate-500 hover:text-[#1e3a8a] underline font-medium transition-colors">
+                login sebagai petugas
+            </button>
+        </div>
+    </div>
 
-            if (isOnline) {
-                // Berubah ke Online
-                btn.className = "flex items-center gap-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-4 py-1.5 rounded-xl text-sm font-semibold hover:bg-emerald-500/20 transition-all shadow-md";
-                wifiIcon.className = "fa-solid fa-wifi";
-                networkText.textContent = "ONLINE (CONNECTED)";
+    <div id="warga-interface" class="hidden phone-frame bg-slate-50 rounded-[40px] shadow-2xl border-8 border-slate-800 overflow-hidden flex flex-col relative transition-all duration-300">
+        <div class="w-full bg-slate-50 text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium">
+            <span>9:41</span>
+            <div class="flex gap-1.5 items-center">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full text-sm"></i>
+            </div>
+        </div>
+
+        <div id="warga-home" class="flex-1 flex flex-col p-6 overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <i class="fas fa-bars text-slate-600 text-lg"></i>
+                <div class="w-8 h-8 rounded-full bg-slate-300 border border-slate-200 overflow-hidden flex items-center justify-center">
+                    <i class="fas fa-user text-slate-500 text-xs"></i>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-slate-800 tracking-tight">Hello, Jeco</h3>
+                <span class="text-xs text-slate-500">Friendly lecco are you retraaut 👋</span>
+            </div>
+
+            <button onclick="bukaPilihLayanan()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-2xl p-6 shadow-lg mb-8 relative overflow-hidden transition-all flex flex-col items-center justify-center gap-2 group">
+                <span class="text-lg font-bold tracking-wide">AMBIL ANTRIAN</span>
+                <span class="text-xs font-medium text-blue-200">(Ticket)</span>
+                <div class="absolute -right-4 -bottom-4 text-white/10 text-7xl transform group-hover:scale-110 transition-transform">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+            </button>
+
+            <div class="mb-4 flex justify-between items-center">
+                <h5 class="text-sm font-bold text-slate-700">Recent tickets</h5>
+                <span class="text-xs text-slate-400 font-medium cursor-pointer">View all</span>
+            </div>
+            
+            <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                <div class="min-w-[200px] bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h6 class="text-[10px] font-bold text-slate-500 uppercase">Ambil Antrian</h6>
+                            <span class="text-[9px] text-slate-400">(Ticket)</span>
+                        </div>
+                        <span class="text-sm font-black text-slate-800">A-01</span>
+                    </div>
+                    <span class="text-[9px] text-slate-400">Date: 25 Mar 2026</span>
+                </div>
+                <div class="min-w-[200px] bg-white border border-slate-200 rounded-2xl p-4 shadow-sm opacity-50">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h6 class="text-[10px] font-bold text-slate-500 uppercase">Ambil Antrian</h6>
+                        </div>
+                        <span class="text-sm font-black text-slate-800">B-12</span>
+                    </div>
+                    <span class="text-[9px] text-slate-400">Date: 20 Mar 2026</span>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <h5 class="text-sm font-bold text-slate-700 mb-3">Local Map of near Instansi</h5>
+                <div class="w-full h-32 bg-slate-200 rounded-2xl relative overflow-hidden flex items-center justify-center">
+                    <img src="https://maps.wikimedia.org/img/osm-intl,13,-6.2088,106.8456,300x150.png?lang=id" class="w-full h-full object-cover opacity-80" alt="Map">
+                    <div class="absolute w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center animate-bounce">
+                        <div class="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="warga-layanan" class="hidden flex-1 flex flex-col p-6 bg-slate-50">
+            <button onclick="kembaliKeHomeWarga()" class="self-start text-slate-500 mb-6 text-sm font-medium"><i class="fas fa-arrow-left mr-2"></i></button>
+            <h4 class="text-lg font-bold text-slate-800 mb-1">1. Pilih Lokasi Instansi</h4>
+            <p class="text-xs text-slate-500 mb-6">Pilih layanan berkas antrean anda.</p>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="generateTiket('Layanan KTP')" class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col items-center gap-3 hover:border-[#1e3a8a] transition-all shadow-sm">
+                    <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-[#1e3a8a] border border-slate-100">
+                        <i class="fas fa-address-card text-xl"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-700">KTP</span>
+                </button>
+                <button onclick="generateTiket('Layanan Paspor')" class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col items-center gap-3 hover:border-[#1e3a8a] transition-all shadow-sm">
+                    <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-[#1e3a8a] border border-slate-100">
+                        <i class="fas fa-passport text-xl"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-700">Paspor</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="warga-tiket" class="hidden flex-1 flex flex-col p-6 justify-center bg-slate-50 relative">
+            <button onclick="kembaliKeHomeWarga()" class="absolute top-10 left-6 text-slate-500"><i class="fas fa-arrow-left"></i></button>
+            
+            <div class="bg-[#1e3a8a] rounded-t-3xl rounded-b-xl p-8 pt-12 flex flex-col items-center text-center shadow-xl mt-8">
+                <span class="text-xs font-medium text-blue-200 mb-1">Nomor Antrean Anda</span>
+                <h1 id="tiket-nomor-id" class="text-6xl font-black text-white tracking-tight mb-8">A-28</h1>
                 
-                phoneBadge.querySelector('span:nth-child(1)').className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
-                phoneBadge.querySelector('span:nth-child(2)').className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-500";
-                phoneText.textContent = "Online";
-                phoneText.className = "text-xs text-blue-100 font-semibold";
+                <div class="w-16 h-16 bg-[#22c55e] rounded-full flex items-center justify-center text-white text-2xl shadow-[0_0_20px_rgba(34,197,94,0.4)] mb-4 border-4 border-[#1e3a8a]">
+                    <i class="fas fa-check"></i>
+                </div>
+                
+                <h2 class="text-sm font-bold text-white mb-1">Instansi Terkonfirmasi</h2>
+                <span class="text-xs text-blue-200 mb-6 block">Dynamic Progress</span>
+                
+                <div class="w-full bg-blue-950/50 rounded-full h-2 mb-8">
+                    <div class="bg-[#22c55e] h-2 rounded-full" style="width: 30%"></div>
+                </div>
 
-                logConsole("Mendeteksi jaringan internet pulih!", "emerald");
-                triggerSyncSequence();
-            } else {
-                // Berubah ke Offline
-                btn.className = "flex items-center gap-2 bg-amber-500/10 text-amber-500 border border-amber-500/30 px-4 py-1.5 rounded-xl text-sm font-semibold hover:bg-amber-500/20 transition-all shadow-md";
-                wifiIcon.className = "fa-solid fa-wifi-slash";
-                networkText.textContent = "OFFLINE MODE";
+                <button onclick="kembaliKeHomeWarga()" class="w-full bg-white text-[#1e3a8a] font-bold text-sm py-4 rounded-xl shadow-md hover:bg-slate-100 transition-all">
+                    Selesai & Tutup
+                </button>
+            </div>
+        </div>
+    </div>
 
-                phoneBadge.querySelector('span:nth-child(1)').className = "absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-0";
-                phoneBadge.querySelector('span:nth-child(2)').className = "relative inline-flex rounded-full h-2 w-2 bg-amber-500";
-                phoneText.textContent = "Offline";
-                phoneText.className = "text-xs text-blue-200 font-semibold";
 
-                logConsole("Jaringan terputus! Mengaktifkan penyimpanan lokal (IndexedDB simulation)...", "amber");
-                showToast("System switched to Offline Mode!", "amber");
-            }
-        }
-
-        // Fungsi pilih Poli
-        function selectPoli(prefix, categoryName) {
-            selectedPrefix = prefix;
-            selectedCategoryName = categoryName;
-
-            const poliA = document.getElementById('poliA');
-            const poliB = document.getElementById('poliB');
-
-            if (prefix === 'A') {
-                poliA.className = "poli-btn p-3 bg-blue-600/20 border border-blue-500 text-blue-400 rounded-xl font-bold text-xs flex flex-col items-center gap-1.5 transition-all shadow-md shadow-blue-500/5";
-                poliB.className = "poli-btn p-3 bg-slate-900 border border-slate-800 text-slate-400 rounded-xl font-semibold text-xs flex flex-col items-center gap-1.5 transition-all hover:bg-slate-800/50";
-            } else {
-                poliB.className = "poli-btn p-3 bg-blue-600/20 border border-blue-500 text-blue-400 rounded-xl font-bold text-xs flex flex-col items-center gap-1.5 transition-all shadow-md shadow-blue-500/5";
-                poliA.className = "poli-btn p-3 bg-slate-900 border border-slate-800 text-slate-400 rounded-xl font-semibold text-xs flex flex-col items-center gap-1.5 transition-all hover:bg-slate-800/50";
-            }
-        }
-
-        // Pembuatan Tiket Antrean
-        function generateTicket() {
-            const instansi = document.getElementById('instansiSelect').value;
+    <div id="pin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-sm text-center shadow-2xl">
+            <h4 class="text-xl font-bold text-slate-800 mb-2">Login Petugas</h4>
+            <p class="text-xs text-slate-500 mb-6">Masukkan Kode Staff unik Anda (Cth: JECO1305)</p>
             
-            // Generate Nomor Berdasarkan prefix poli terpilih
-            const samePrefixTickets = queueData.filter(t => t.number.startsWith(selectedPrefix));
-            const ticketSeq = samePrefixTickets.length + 1;
-            const ticketNumber = `${selectedPrefix}-${ticketSeq.toString().padStart(2, '0')}`;
-
-            // Hitung sisa antrean & estimasi waktu
-            const pendingTickets = queueData.filter(t => t.status === 'Pending').length;
-            const estTime = pendingTickets * 5; // 5 menit per orang
-
-            const newTicket = {
-                id: Date.now(),
-                number: ticketNumber,
-                instansi: instansi,
-                category: selectedCategoryName,
-                status: 'Pending',
-                syncStatus: isOnline ? 'Synced' : 'Pending'
-            };
-
-            queueData.push(newTicket);
-
-            // Tampilkan ke HP Warga
-            document.getElementById('ticketEmptyState').classList.add('hidden');
-            document.getElementById('ticketActiveState').classList.remove('hidden');
+            <input type="text" id="pin-input" placeholder="KODE STAFF" class="w-full text-center text-lg font-bold uppercase tracking-widest px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#1e3a8a] focus:outline-none mb-2">
+            <p id="pin-error" class="text-xs text-red-500 font-medium hidden mb-4">Kode salah! Akses ditolak.</p>
             
-            document.getElementById('ticketInstansi').textContent = instansi;
-            document.getElementById('ticketNumber').textContent = ticketNumber;
-            document.getElementById('ticketQueueCount').textContent = `${pendingTickets} Orang`;
-            document.getElementById('ticketEstTime').textContent = `${estTime} Menit`;
+            <div class="flex gap-3 mt-6">
+                <button onclick="tutupModalPin()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold py-3 rounded-xl transition-all">Batal</button>
+                <button onclick="validasiPinPetugas()" class="flex-1 bg-[#1e3a8a] hover:bg-blue-900 text-white text-sm font-bold py-3 rounded-xl shadow transition-all">Masuk</button>
+            </div>
+        </div>
+    </div>
 
-            const syncBadge = document.getElementById('ticketSyncStatus');
-            if (isOnline) {
-                syncBadge.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                syncBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> Cloud Synced`;
-                logConsole(`Tiket ${ticketNumber} diterbitkan & disinkronisasi ke Cloud DB.`, "slate");
-            } else {
-                syncBadge.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20";
-                syncBadge.innerHTML = `<i class="fa-solid fa-database"></i> Local Save Only`;
-                logConsole(`Koneksi terputus! Tiket ${ticketNumber} disimpan di LocalDB (:LocalDB).`, "amber");
-            }
 
-            updateUI();
-            showToast(`Tiket ${ticketNumber} berhasil dibuat!`, "blue");
-        }
-
-        // Memanggil Antrean Berikutnya (Text-To-Speech)
-        function callQueue() {
-            const nextPending = queueData.find(t => t.status === 'Pending');
-
-            if (!nextPending) {
-                showToast("Tidak ada nomor antrean dalam daftar tunggu!", "amber");
-                return;
-            }
-
-            // Update status ke Called
-            nextPending.status = 'Called';
-            currentActiveId = nextPending.id;
-
-            updateUI();
-
-            // Panggil Suara via Browser Speech Synthesis
-            const queueNumSpaced = nextPending.number.split('').join(' '); // A - 0 - 1
-            const speechText = `Antrean nomor ${queueNumSpaced}, silakan menuju Loket Utama 1.`;
-            
-            const speech = new SpeechSynthesisUtterance();
-            speech.text = speechText;
-            speech.lang = 'id-ID';
-            speech.rate = 0.85;
-            window.speechSynthesis.speak(speech);
-
-            logConsole(`Memanggil antrean: ${nextPending.number} ke Loket 1.`, "emerald");
-            showToast(`Memanggil nomor ${nextPending.number}!`, "emerald");
-        }
-
-        // Nyatakan Selesai
-        function finishActive() {
-            if (!currentActiveId) {
-                showToast("Tidak ada antrean aktif yang sedang dilayani!", "amber");
-                return;
-            }
-            const active = queueData.find(t => t.id === currentActiveId);
-            active.status = 'Completed';
-            currentActiveId = null;
-            updateUI();
-            logConsole(`Antrean ${active.number} selesai dilayani.`, "blue");
-            showToast(`Antrean ${active.number} diselesaikan!`, "blue");
-        }
-
-        // Nyatakan Lewati
-        function skipActive() {
-            if (!currentActiveId) {
-                showToast("Tidak ada antrean aktif untuk dilewati!", "amber");
-                return;
-            }
-            const active = queueData.find(t => t.id === currentActiveId);
-            active.status = 'Skipped';
-            currentActiveId = null;
-            updateUI();
-            logConsole(`Antrean ${active.number} dilewati karena warga absen.`, "rose");
-            showToast(`Antrean ${active.number} berhasil dilewati!`, "rose");
-        }
-
-        // Simpan Log ke Konsol Virtual
-        function logConsole(message, colorClass) {
-            const consoleBox = document.getElementById('consoleLogs');
-            const p = document.createElement('p');
-            
-            let color = "text-slate-400";
-            if (colorClass === "emerald") color = "text-emerald-400";
-            if (colorClass === "amber") color = "text-amber-400";
-            if (colorClass === "rose") color = "text-rose-400";
-            if (colorClass === "blue") color = "text-blue-400";
-
-            p.className = color;
-            p.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
-            consoleBox.appendChild(p);
-            consoleBox.scrollTop = consoleBox.scrollHeight;
-        }
-
-        // Simulasi Sinkronisasi Database Otomatis (SyncManager)
-        function triggerSyncSequence() {
-            const pendingSync = queueData.filter(t => t.syncStatus === 'Pending');
-
-            if (pendingSync.length === 0) {
-                logConsole("Tidak ada data antrean lokal yang tertunda. Sinkronisasi beres.", "slate");
-                return;
-            }
-
-            logConsole(`Mengecek penundaan... Ditemukan ${pendingSync.length} antrean tertunda di LocalDB.`, "amber");
-            
-            // Animasi Proses Sinkronisasi
-            setTimeout(() => {
-                logConsole("Menghubungkan ke Cloud DB Server...", "blue");
-            }, 800);
-
-            setTimeout(() => {
-                pendingSync.forEach(t => {
-                    t.syncStatus = 'Synced';
-                });
-                updateUI();
-                logConsole(`Sukses menyinkronkan ${pendingSync.length} data tiket ke database Cloud pusat (100% Synced).`, "emerald");
-                showToast("Data LocalDB Berhasil Sinkron!", "emerald");
-            }, 2000);
-        }
-
-        // Update Tampilan UI Secara Menyeluruh
-        function updateUI() {
-            const active = queueData.find(t => t.id === currentActiveId);
-            const activeCounter = document.getElementById('activeCounter');
-            const activeCategory = document.getElementById('activeCategory');
-
-            if (active) {
-                activeCounter.textContent = active.number;
-                activeCategory.textContent = `${active.instansi} - ${active.category}`;
-            } else {
-                activeCounter.textContent = "NONE";
-                activeCategory.textContent = "-";
-            }
-
-            // Hitung status panel atas dashboard
-            const pendingCount = queueData.filter(t => t.status === 'Pending').length;
-            const completedCount = queueData.filter(t => t.status === 'Completed').length;
-
-            document.getElementById('pendingCount').textContent = `${pendingCount} Tiket`;
-            document.getElementById('completedCount').textContent = `${completedCount} Tiket`;
-
-            // Update Tabel database
-            const tableBody = document.getElementById('dbTableBody');
-            tableBody.innerHTML = "";
-
-            if (queueData.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="p-4 text-center text-slate-500">Belum ada antrean masuk di LocalDB.</td>
-                    </tr>`;
-                return;
-            }
-
-            queueData.forEach(t => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-900/60 transition-colors";
-
-                // Status Badge
-                let statusBadge = '';
-                if (t.status === 'Pending') statusBadge = `<span class="bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/20 font-bold text-[10px]">TUNGGU</span>`;
-                if (t.status === 'Called') statusBadge = `<span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20 font-bold text-[10px] animate-pulse">LOKET 1</span>`;
-                if (t.status === 'Completed') statusBadge = `<span class="bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-bold text-[10px]">SELESAI</span>`;
-                if (t.status === 'Skipped') statusBadge = `<span class="bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/20 font-bold text-[10px]">LEWAT</span>`;
-
-                // Sync Badge
-                let syncBadge = '';
-                if (t.syncStatus === 'Synced') syncBadge = `<span class="text-emerald-400 font-bold flex items-center justify-center gap-1"><i class="fa-solid fa-cloud-arrow-up"></i> cloud_db</span>`;
-                if (t.syncStatus === 'Pending') syncBadge = `<span class="text-amber-500 font-bold flex items-center justify-center gap-1 animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> local_temp</span>`;
-
-                tr.innerHTML = `
-                    <td class="p-3 font-mono font-bold text-slate-200">${t.number}</td>
-                    <td class="p-3 text-slate-400 font-medium">${t.instansi}</td>
-                    <td class="p-3 text-center">${statusBadge}</td>
-                    <td class="p-3 text-center text-[10px]">${syncBadge}</td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        }
-
-        // Tampilkan Notifikasi Toast Kustom
-        function showToast(message, type) {
-            const toast = document.getElementById('customToast');
-            const icon = document.getElementById('toastIcon');
-            const msg = document.getElementById('toastMessage');
-
-            msg.textContent = message;
-
-            if (type === "emerald") {
-                icon.className = "text-emerald-400 text-lg";
-                icon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
-            } else if (type === "amber") {
-                icon.className = "text-amber-400 text-lg";
-                icon.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
-            } else if (type === "rose") {
-                icon.className = "text-rose-400 text-lg";
-                icon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
-            } else {
-                icon.className = "text-blue-400 text-lg";
-                icon.innerHTML = `<i class="fa-solid fa-info-circle"></i>`;
-            }
-
-            toast.classList.remove('translate-y-24', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-24', 'opacity-0');
-            }, 3000);
-        }
-    </script>
-</body>
-</html>
+    <div id="petugas-interface" class="hidden w-full max-w-6xl bg-slate-50 text-slate-
