@@ -6,19 +6,10 @@
     <title>SmartQueue - Integrated System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
-        }
-        .phone-frame {
-            width: 375px;
-            height: 812px;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .phone-frame { width: 375px; height: 812px; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -26,114 +17,98 @@
 </head>
 <body class="flex justify-center items-center min-h-screen p-4 overflow-hidden relative">
 
-    <div id="push-notification" class="fixed top-6 right-6 w-80 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] border-l-8 border-[#22c55e] p-4 flex gap-3 transform transition-all duration-500 translate-x-[150%] z-[100]">
-        <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-[#22c55e] shrink-0">
-            <i class="fas fa-bell text-lg"></i>
-        </div>
-        <div>
-            <h4 class="text-sm font-bold text-slate-800 mb-1">SmartQueue Update</h4>
-            <p id="notif-message" class="text-xs text-slate-500 leading-relaxed"></p>
-        </div>
+    <!-- Notifikasi & Call Modal (Sama seperti sebelumnya) -->
+    <div id="push-notification" class="fixed top-6 right-6 w-80 bg-white rounded-2xl shadow-2xl border-l-8 border-[#22c55e] p-4 flex gap-3 transform transition-all duration-500 translate-x-[150%] z-[100]">
+        <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-[#22c55e] shrink-0"><i class="fas fa-bell text-lg"></i></div>
+        <div><h4 class="text-sm font-bold text-slate-800 mb-1">SmartQueue Update</h4><p id="notif-message" class="text-xs text-slate-500 leading-relaxed"></p></div>
     </div>
 
     <div id="call-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex justify-center items-center z-[200] p-4 transition-opacity duration-300 opacity-0">
         <div id="call-modal-content" class="bg-white rounded-[32px] p-8 w-full max-w-sm text-center shadow-2xl transform transition-transform duration-500 scale-0 border-8 border-[#1e3a8a]">
-            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center text-red-500 mx-auto mb-4 animate-bounce">
-                <i class="fas fa-bullhorn text-4xl"></i>
-            </div>
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center text-red-500 mx-auto mb-4 animate-bounce"><i class="fas fa-bullhorn text-4xl"></i></div>
             <span class="text-red-500 font-bold tracking-widest text-xs uppercase mb-1 block">🚨 Peringatan Utama 🚨</span>
             <h2 class="text-3xl font-black text-slate-800 mb-2 leading-tight">SEKARANG<br>ANTREAN KAMU!</h2>
-            
             <div class="bg-slate-50 py-4 border border-slate-100 rounded-2xl my-5 shadow-inner">
                 <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Nomor Panggilan</span>
                 <h1 id="call-modal-nomor" class="text-7xl font-black text-[#1e3a8a] tracking-tighter">A-00</h1>
             </div>
-            
-            <p class="text-sm text-slate-500 mb-6 font-medium">Silakan langsung menuju ke meja petugas Loket sekarang juga.</p>
-            <button onclick="konfirmasiKedatangan()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-black text-lg py-4 rounded-xl shadow-[0_8px_20px_rgba(34,197,94,0.3)] transition-all flex justify-center items-center gap-2">
-                <i class="fas fa-person-walking-arrow-right"></i> Konfirmasi Kedatangan
-            </button>
+            <button onclick="konfirmasiKedatangan()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-black text-lg py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2"><i class="fas fa-person-walking-arrow-right"></i> Konfirmasi Kedatangan</button>
         </div>
     </div>
 
-
+    <!-- Splash Screen -->
     <div id="splash-interface" class="phone-frame bg-white rounded-[40px] shadow-2xl border-8 border-slate-800 overflow-hidden flex flex-col relative transition-all duration-300">
-        <div class="w-full bg-white text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium">
-            <span>9:41</span>
-            <div class="flex gap-1.5 items-center">
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-wifi"></i>
-                <i class="fas fa-battery-full text-sm"></i>
-            </div>
-        </div>
+        <div class="w-full bg-white text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium"><span>9:41</span><div class="flex gap-1.5 items-center"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full text-sm"></i></div></div>
         <div class="flex-1 flex flex-col items-center justify-center p-8">
-            <div class="w-24 h-24 bg-[#1e3a8a] text-white rounded-3xl flex items-center justify-center mb-6 transform rotate-12 shadow-lg">
-                <i class="fas fa-layer-group text-5xl -rotate-12"></i>
-            </div>
+            <div class="w-24 h-24 bg-[#1e3a8a] text-white rounded-3xl flex items-center justify-center mb-6 transform rotate-12 shadow-lg"><i class="fas fa-layer-group text-5xl -rotate-12"></i></div>
             <h1 class="text-2xl font-black text-[#1e3a8a] tracking-tight mb-20 uppercase">SmartQueue</h1>
-            <button onclick="gotoAuthScreen()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-sm py-4 rounded-2xl shadow-md transition-all mb-4">
-                Login
-            </button>
-            <button onclick="bukaModalPin()" class="text-sm text-slate-500 hover:text-[#1e3a8a] underline font-medium transition-colors">
-                login sebagai petugas
-            </button>
+            <button onclick="gotoAuthScreen()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-sm py-4 rounded-2xl shadow-md mb-4">Login Warga</button>
+            <button onclick="bukaModalPin()" class="text-sm text-slate-500 hover:text-[#1e3a8a] underline font-medium">login sebagai petugas</button>
         </div>
     </div>
 
+    <!-- Auth Screen -->
     <div id="auth-interface" class="hidden phone-frame bg-white rounded-[40px] shadow-2xl border-8 border-slate-800 overflow-hidden flex flex-col relative transition-all duration-300">
-        <div class="w-full bg-white text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium">
-            <span>9:41</span>
-            <div class="flex gap-1.5 items-center">
-                <i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full text-sm"></i>
-            </div>
-        </div>
+        <div class="w-full bg-white text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium"><span>9:41</span><div class="flex gap-1.5 items-center"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div></div>
         <div class="flex-1 flex flex-col p-8">
             <button onclick="backToSplash()" class="self-start text-slate-400 hover:text-[#1e3a8a] mb-6 text-sm font-medium"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
             <div class="mb-8">
                 <h2 id="auth-title" class="text-2xl font-black text-[#1e3a8a] tracking-tight">Login Akun</h2>
-                <p id="auth-subtitle" class="text-xs text-slate-500 mt-1">Silakan masuk untuk mengambil antrean.</p>
+                <p id="auth-subtitle" class="text-xs text-slate-500 mt-1">Gunakan Email: jeco@binus.edu | Pass: 123</p>
+                <p id="auth-error" class="text-xs text-red-500 font-bold mt-2 hidden"></p>
             </div>
             <div class="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl shadow-sm mb-6">
                 <div id="nama-container" class="hidden mb-3">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Nama Lengkap</label>
-                    <input type="text" placeholder="Masukkan nama lengkap" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
+                    <input type="text" id="auth-nama" placeholder="Masukkan nama" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none">
                 </div>
                 <div class="mb-3">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Email Address</label>
-                    <input type="email" placeholder="contoh@email.com" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
+                    <input type="email" id="auth-email" placeholder="contoh@email.com" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none">
                 </div>
                 <div class="mb-5">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Password</label>
-                    <input type="password" placeholder="••••••••" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
+                    <input type="password" id="auth-pass" placeholder="••••••••" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none">
                 </div>
-                <button onclick="submitLoginWarga()" id="btn-login-submit" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-sm py-3.5 rounded-xl shadow-md transition-all">Sign-In</button>
+                <button onclick="submitLoginWarga()" id="btn-login-submit" class="w-full bg-[#1e3a8a] text-white font-bold text-sm py-3.5 rounded-xl shadow-md">Sign-In</button>
             </div>
             <div class="mt-auto text-center">
-                <button onclick="toggleAuthMode()" id="text-toggle-auth" class="text-xs text-slate-500 hover:text-[#1e3a8a] font-medium transition-colors">
-                    Belum punya akun? <span class="font-bold underline">Daftar di sini</span>
-                </button>
+                <button onclick="toggleAuthMode()" id="text-toggle-auth" class="text-xs text-slate-500 font-medium">Belum punya akun? <span class="font-bold underline">Daftar di sini</span></button>
             </div>
         </div>
     </div>
 
+    <!-- Warga Interface -->
     <div id="warga-interface" class="hidden phone-frame bg-slate-50 rounded-[40px] shadow-2xl border-8 border-slate-800 overflow-hidden flex flex-col relative transition-all duration-300">
-        <div class="w-full bg-slate-50 text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium">
-            <span>9:41</span><div class="flex gap-1.5 items-center"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full text-sm"></i></div>
+        <div class="w-full bg-slate-50 text-slate-800 text-xs px-6 py-3 flex justify-between items-center z-10 font-medium"><span>9:41</span><div class="flex gap-1.5 items-center"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div></div>
+
+        <!-- Sidebar Warga (Fitur 2 Aktif) -->
+        <div id="warga-sidebar" class="absolute inset-y-0 left-0 w-64 bg-white shadow-2xl transform translate-x-[-100%] transition-transform duration-300 z-50 flex flex-col">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <span class="font-black text-[#1e3a8a] tracking-wider">MENU</span>
+                <button onclick="toggleSidebarWarga()" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="flex-1 p-4 flex flex-col gap-2">
+                <button class="w-full text-left px-4 py-3 text-sm font-bold text-[#1e3a8a] bg-blue-50 rounded-xl"><i class="fas fa-home w-6"></i> Beranda</button>
+                <button class="w-full text-left px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl"><i class="fas fa-history w-6"></i> Riwayat Tiket</button>
+                <button class="w-full text-left px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl"><i class="fas fa-cog w-6"></i> Pengaturan</button>
+            </div>
+            <div class="p-6 border-t border-slate-100">
+                <button onclick="logoutWarga()" class="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 font-bold py-3 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout Akun</button>
+            </div>
         </div>
 
         <div id="warga-home" class="flex-1 flex flex-col p-6 overflow-y-auto relative">
             <div class="flex justify-between items-center mb-4">
-                <i class="fas fa-bars text-slate-600 text-lg"></i>
-                <div class="w-8 h-8 rounded-full bg-slate-300 border border-slate-200 overflow-hidden flex items-center justify-center cursor-pointer" onclick="logoutWarga()">
-                    <i class="fas fa-user text-slate-500 text-xs"></i>
-                </div>
+                <button onclick="toggleSidebarWarga()"><i class="fas fa-bars text-slate-600 text-lg"></i></button>
+                <div class="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"><i class="fas fa-user text-slate-500 text-xs"></i></div>
             </div>
 
             <div class="mb-6">
-                <h3 class="text-2xl font-bold text-slate-800 tracking-tight">Hello, Jeco</h3>
+                <h3 id="warga-nama-display" class="text-2xl font-bold text-slate-800 tracking-tight">Hello, User</h3>
                 <div class="flex items-center gap-1.5 text-xs font-semibold text-[#1e3a8a] mt-1">
                     <i class="fas fa-map-marker-alt text-red-500"></i>
-                    <select id="pilihan-wilayah" onchange="renderInstansiSesuaiWilayah()" class="bg-transparent border-none font-bold focus:outline-none cursor-pointer text-[#1e3a8a] underline decoration-dotted">
+                    <select id="pilihan-wilayah" onchange="renderInstansiSesuaiWilayah()" class="bg-transparent border-none font-bold focus:outline-none text-[#1e3a8a] underline decoration-dotted">
                         <option value="Jakbar">Jakarta Barat, Kebon Jeruk</option>
                         <option value="Jaksel">Jakarta Selatan, Kebayoran Baru</option>
                     </select>
@@ -142,25 +117,15 @@
 
             <h4 class="text-sm font-bold text-slate-800 mb-2">1. Pilih Instansi Layanan</h4>
             <div class="bg-white border border-slate-200 rounded-xl p-2 shadow-sm mb-4">
-                <select id="pilihan-instansi" onchange="updateLivePreviewUI()" class="w-full bg-transparent text-sm font-semibold text-slate-700 py-2.5 px-2 focus:outline-none cursor-pointer">
-                </select>
+                <select id="pilihan-instansi" onchange="updateLivePreviewUI()" class="w-full bg-transparent text-sm font-semibold text-slate-700 py-2.5 px-2 focus:outline-none"></select>
             </div>
 
             <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-6">
                 <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4"><i class="fas fa-chart-simple text-[#1e3a8a] mr-1"></i> Live Kondisi Antrean</h5>
                 <div class="grid grid-cols-3 gap-2 text-center">
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <span class="text-[9px] font-medium text-slate-400 block mb-1">Sedang Dilayani</span>
-                        <span id="preview-now" class="text-base font-black text-slate-800">-</span>
-                    </div>
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <span class="text-[9px] font-medium text-slate-400 block mb-1">Sisa Antrean</span>
-                        <span id="preview-sisa" class="text-base font-black text-amber-500">-</span>
-                    </div>
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <span class="text-[9px] font-medium text-slate-400 block mb-1">Estimasi Waktu</span>
-                        <span id="preview-waktu" class="text-base font-black text-[#1e3a8a]">-</span>
-                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span class="text-[9px] font-medium text-slate-400 block mb-1">Sedang Dilayani</span><span id="preview-now" class="text-base font-black text-slate-800">-</span></div>
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span class="text-[9px] font-medium text-slate-400 block mb-1">Sisa Antrean</span><span id="preview-sisa" class="text-base font-black text-amber-500">-</span></div>
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span class="text-[9px] font-medium text-slate-400 block mb-1">Est. Waktu</span><span id="preview-waktu" class="text-base font-black text-[#1e3a8a]">-</span></div>
                 </div>
             </div>
 
@@ -176,9 +141,7 @@
                         <h4 id="display-tiket-instansi" class="text-[10px] font-bold text-slate-400 uppercase">Instansi</h4>
                         <h1 id="display-tiket-aktif" class="text-4xl font-black text-[#1e3a8a] tracking-tight">A-00</h1>
                     </div>
-                    <div class="w-11 h-11 bg-blue-50 rounded-full flex items-center justify-center text-[#1e3a8a] group-hover:scale-110 transition-transform">
-                        <i class="fas fa-qrcode text-lg"></i>
-                    </div>
+                    <div class="w-11 h-11 bg-blue-50 rounded-full flex items-center justify-center text-[#1e3a8a] group-hover:scale-110 transition-transform"><i class="fas fa-qrcode text-lg"></i></div>
                 </div>
             </div>
         </div>
@@ -188,34 +151,34 @@
             <div class="bg-[#1e3a8a] rounded-t-3xl rounded-b-xl p-8 pt-12 flex flex-col items-center text-center shadow-xl mt-8">
                 <span class="text-xs font-medium text-blue-200 mb-1">Nomor Antrean Anda</span>
                 <h1 id="tiket-nomor-id" class="text-6xl font-black text-white tracking-tight mb-8">A-00</h1>
-                <div class="w-16 h-16 bg-[#22c55e] rounded-full flex items-center justify-center text-white text-2xl shadow-[0_0_20px_rgba(34,197,94,0.4)] mb-4 border-4 border-[#1e3a8a]">
-                    <i class="fas fa-check"></i>
-                </div>
+                <div class="w-16 h-16 bg-[#22c55e] rounded-full flex items-center justify-center text-white text-2xl shadow-lg mb-4 border-4 border-[#1e3a8a]"><i class="fas fa-check"></i></div>
                 <h2 id="tiket-instansi-nama" class="text-sm font-bold text-white mb-1">Instansi Terkonfirmasi</h2>
                 <span class="text-xs text-blue-200 mb-6 block">Harap pantau berkala notifikasi HP Anda</span>
-                <button onclick="kembaliKeHomeWarga()" class="w-full bg-white text-[#1e3a8a] font-bold text-sm py-4 rounded-xl shadow-md hover:bg-slate-100 transition-all">Kembali ke Beranda</button>
+                <button onclick="kembaliKeHomeWarga()" class="w-full bg-white text-[#1e3a8a] font-bold text-sm py-4 rounded-xl shadow-md">Kembali ke Beranda</button>
             </div>
         </div>
     </div>
 
+    <!-- PIN Modal -->
     <div id="pin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
         <div class="bg-white rounded-3xl p-8 w-full max-w-sm text-center shadow-2xl">
             <h4 class="text-xl font-bold text-slate-800 mb-2">Login Petugas</h4>
-            <p class="text-xs text-slate-500 mb-4">Masukkan Kode Otoritas Instansi Anda.</p>
-            <input type="text" id="pin-input" placeholder="PREFIX + NAMA + ID" class="w-full text-center text-lg font-bold uppercase tracking-widest px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#1e3a8a] focus:outline-none mb-1">
+            <input type="text" id="pin-input" placeholder="MASUKKAN PIN" class="w-full text-center text-lg font-bold uppercase tracking-widest px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#1e3a8a] mb-1">
             <p id="pin-error" class="text-xs text-red-500 font-medium hidden mb-4">Kode Staff tidak valid!</p>
-            <div class="text-[10px] text-left text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-200 space-y-1 mb-4">
-                <p>💡 Hint Kode:</p>
-                <p>Puskesmas: <strong class="text-[#1e3a8a]">PKJJECO1310</strong></p>
+            <div class="text-[10px] text-left text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-200 space-y-1 mb-4 h-24 overflow-y-auto">
+                <p>💡 Hint Kode (Untuk Demo):</p>
+                <p>Puskesmas KB: <strong class="text-[#1e3a8a]">PKJJECO1310</strong></p>
+                <p>Kel. Kemanggisan: <strong class="text-[#1e3a8a]">KKMSTAFF001</strong></p>
                 <p>Dukcapil: <strong class="text-[#1e3a8a]">DDKSTAFF9901</strong></p>
             </div>
             <div class="flex gap-3">
-                <button onclick="tutupModalPin()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold py-3 rounded-xl transition-all">Batal</button>
-                <button onclick="validasiPinPetugas()" class="flex-1 bg-[#1e3a8a] hover:bg-blue-900 text-white text-sm font-bold py-3 rounded-xl shadow transition-all">Masuk</button>
+                <button onclick="tutupModalPin()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold py-3 rounded-xl">Batal</button>
+                <button onclick="validasiPinPetugas()" class="flex-1 bg-[#1e3a8a] text-white text-sm font-bold py-3 rounded-xl shadow">Masuk</button>
             </div>
         </div>
     </div>
 
+    <!-- Petugas Interface -->
     <div id="petugas-interface" class="hidden w-full max-w-6xl bg-slate-50 text-slate-800 rounded-[32px] shadow-2xl overflow-hidden h-[720px] flex transition-all duration-300 border border-slate-200">
         <aside class="w-64 bg-[#1e3a8a] flex flex-col">
             <div class="h-20 flex items-center px-6 gap-3 border-b border-blue-800/50">
@@ -226,7 +189,7 @@
                 <span class="text-[10px] font-bold text-blue-300 uppercase px-3 mb-2 mt-2">Otoritas Loket</span>
                 <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold bg-white/10 text-white text-left shadow-sm"><i class="fas fa-border-all w-4"></i> Dashboard</button>
             </div>
-            <div class="p-4"><button onclick="logoutKeSplash()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-blue-200 hover:bg-red-500/20 hover:text-red-100 text-left transition-colors"><i class="fas fa-sign-out-alt w-4"></i> Keluar</button></div>
+            <div class="p-4"><button onclick="logoutKeSplash()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-blue-200 hover:bg-red-500/20 text-left"><i class="fas fa-sign-out-alt w-4"></i> Keluar</button></div>
         </aside>
 
         <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden">
@@ -241,31 +204,15 @@
             <div class="p-8 flex-1 overflow-y-auto grid grid-cols-3 gap-8">
                 <div class="col-span-2 flex flex-col gap-6">
                     <div class="grid grid-cols-3 gap-6">
-                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                            <span class="text-xs font-semibold text-slate-500 block mb-1">Nomor Saat Ini</span>
-                            <h2 id="dash-nomor-sekarang" class="text-4xl font-black text-slate-800 tracking-tight">-</h2>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                            <span class="text-xs font-semibold text-slate-500 block mb-1">Sisa Antrean</span>
-                            <h2 id="dash-sisa-antrean" class="text-4xl font-black text-slate-800 tracking-tight">-</h2>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                            <span class="text-xs font-semibold text-slate-500 block mb-1">Total Dilayani</span>
-                            <h2 id="dash-total-dilayani" class="text-4xl font-black text-slate-800 tracking-tight">-</h2>
-                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"><span class="text-xs font-semibold text-slate-500 block mb-1">Nomor Saat Ini</span><h2 id="dash-nomor-sekarang" class="text-4xl font-black text-slate-800 tracking-tight">-</h2></div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"><span class="text-xs font-semibold text-slate-500 block mb-1">Sisa Antrean</span><h2 id="dash-sisa-antrean" class="text-4xl font-black text-slate-800 tracking-tight">-</h2></div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"><span class="text-xs font-semibold text-slate-500 block mb-1">Total Dilayani</span><h2 id="dash-total-dilayani" class="text-4xl font-black text-slate-800 tracking-tight">-</h2></div>
                     </div>
-
                     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm flex-1 flex flex-col overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-100"><h4 class="text-sm font-bold text-slate-800">Antrean Berjalan</h4></div>
                         <div class="flex-1 overflow-y-auto p-4">
                             <table class="w-full text-left border-collapse text-sm">
-                                <thead>
-                                    <tr class="text-xs text-slate-400 font-semibold border-b border-slate-100">
-                                        <th class="p-3 pb-4">A. ID</th>
-                                        <th class="p-3 pb-4">Waktu Masuk</th>
-                                        <th class="p-3 pb-4 text-right">Status</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr class="text-xs text-slate-400 font-semibold border-b border-slate-100"><th class="p-3 pb-4">A. ID</th><th class="p-3 pb-4">Waktu Masuk</th><th class="p-3 pb-4 text-right">Status</th></tr></thead>
                                 <tbody id="dash-tabel-body"></tbody>
                             </table>
                         </div>
@@ -273,18 +220,17 @@
                 </div>
 
                 <div class="col-span-1 flex flex-col gap-4">
-                    <button onclick="panggilAntreanBerikutnya()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-black text-sm py-5 rounded-xl shadow-[0_8px_15px_rgba(34,197,94,0.2)] transition-all">PANGGIL ANTRIAN BERIKUTNYA</button>
-                    <button class="w-full bg-emerald-100/50 text-emerald-600 font-bold text-sm py-3 rounded-xl">LOKET IS SEMENTARA TUTUP</button>
+                    <button onclick="panggilAntreanBerikutnya()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-black text-sm py-5 rounded-xl shadow-lg">PANGGIL ANTRIAN BERIKUTNYA</button>
+                    <!-- Tombol Toggle Loket (Fitur 3) -->
+                    <button id="btn-toggle-loket" onclick="toggleStatusLoket()" class="w-full bg-red-100 text-red-600 font-bold text-sm py-3 rounded-xl hover:bg-red-200 transition-colors">TUTUP LOKET SEMENTARA</button>
                 </div>
             </div>
         </main>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-
     <script>
         const socket = io();
-
         let instansiDatabase = {}; 
         let instansiPerWilayah = {
             "Jakbar": ["Puskesmas Kebon Jeruk", "Kelurahan Kemanggisan", "Dinas Dukcapil"],
@@ -293,22 +239,81 @@
         let isSignUpMode = false;
         let tiketWargaSaya = null; 
         let currentActiveStaffInstansi = null; 
+        let currentUserNama = "";
 
-        
         socket.on('updateData', (serverData) => {
             instansiDatabase = serverData;
-            
-            if (document.getElementById('pilihan-instansi').innerHTML.trim() === "") {
+            if (document.getElementById('pilihan-instansi').innerHTML.trim() === "") renderInstansiSesuaiWilayah();
+            if (!document.getElementById('warga-interface').classList.contains('hidden')) updateLivePreviewUI();
+            if (currentActiveStaffInstansi !== null) updateDashboardUI();
+        });
+
+        function submitLoginWarga() {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            const nama = document.getElementById('auth-nama').value;
+            const errorText = document.getElementById('auth-error');
+
+            if(!email || !pass) { errorText.innerText = "Email dan Password wajib diisi!"; errorText.classList.remove('hidden'); return; }
+
+            if(isSignUpMode) {
+                if(!nama) { errorText.innerText = "Nama wajib diisi!"; errorText.classList.remove('hidden'); return; }
+                socket.emit('registerWarga', {nama, email, password: pass});
+            } else {
+                socket.emit('loginWarga', {email, password: pass});
+            }
+        }
+
+        socket.on('authResponse', (res) => {
+            const errorText = document.getElementById('auth-error');
+            if(res.sukses) {
+                currentUserNama = res.nama;
+                document.getElementById('warga-nama-display').innerText = "Hello, " + currentUserNama;
+                errorText.classList.add('hidden');
+                document.getElementById('auth-interface').classList.add('hidden');
+                document.getElementById('warga-interface').classList.remove('hidden');
                 renderInstansiSesuaiWilayah();
-            }
-            
-            if (!document.getElementById('warga-interface').classList.contains('hidden')) {
-                updateLivePreviewUI();
-            }
-            if (currentActiveStaffInstansi !== null) {
-                updateDashboardUI();
+            } else {
+                errorText.innerText = res.pesan;
+                errorText.classList.remove('hidden');
             }
         });
+
+        function validasiPinPetugas() {
+            const inputPin = document.getElementById('pin-input').value.trim().toUpperCase();
+            socket.emit('loginPetugas', inputPin);
+        }
+
+        socket.on('loginPetugasRespons', (status) => {
+            if (status.sukses) {
+                currentActiveStaffInstansi = status.instansi;
+                document.getElementById('dashboard-staff-name').innerText = status.staffName;
+                tutupModalPin();
+                document.getElementById('dashboard-instansi-title').innerText = "Panel Kontrol: " + currentActiveStaffInstansi;
+                document.getElementById('splash-interface').classList.add('hidden');
+                document.getElementById('petugas-interface').classList.remove('hidden');
+                updateDashboardUI();
+            } else {
+                document.getElementById('pin-error').classList.remove('hidden');
+            }
+        });
+
+     
+        function toggleSidebarWarga() {
+            const sidebar = document.getElementById('warga-sidebar');
+            if(sidebar.classList.contains('translate-x-[-100%]')) {
+                sidebar.classList.remove('translate-x-[-100%]');
+                sidebar.classList.add('translate-x-0');
+            } else {
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.add('translate-x-[-100%]');
+            }
+        }
+
+        
+        function toggleStatusLoket() {
+            if(currentActiveStaffInstansi) socket.emit('toggleLoket', currentActiveStaffInstansi);
+        }
 
         socket.on('tiketDikonfirmasi', (tiketBaru) => {
             tiketWargaSaya = tiketBaru;
@@ -319,9 +324,7 @@
             updateLivePreviewUI();
         });
 
-        socket.on('nomorDipanggil', (infoPanggilan) => {
-            cekNotifikasiCerdas(infoPanggilan.instansi, infoPanggilan.nomorSekarang);
-        });
+        socket.on('nomorDipanggil', (infoPanggilan) => { cekNotifikasiCerdas(infoPanggilan.instansi, infoPanggilan.nomorSekarang); });
 
         function ambilAntreanSekarang() {
             let instansi = document.getElementById('pilihan-instansi').value;
@@ -339,49 +342,19 @@
         function panggilAntreanBerikutnya() {
             if (instansiDatabase[currentActiveStaffInstansi].listMenunggu.length > 0) {
                 socket.emit('panggilBerikutnya', currentActiveStaffInstansi);
-            } else {
-                alert("Tidak ada antrean warga yang menunggu!");
-            }
+            } else { alert("Tidak ada antrean warga yang menunggu!"); }
         }
 
         function cekNotifikasiCerdas(instansiDipanggil, nomorSekarangInstansi) {
             if (tiketWargaSaya !== null && tiketWargaSaya.instansi === instansiDipanggil) {
                 let jarakAntrean = tiketWargaSaya.idNum - nomorSekarangInstansi;
-                
-                if (jarakAntrean === 3) {
-                    tampilkanPushNotif(`Giliran Anda tinggal 3 antrean lagi! Silakan bersiap.`);
-                } 
-                else if (jarakAntrean === 1) { 
-                    tampilkanPushNotif(`🔔 Sisa antrean: 0 orang! Mohon segera bersiap di depan pintu Loket.`);
-                }
-                else if (jarakAntrean === 0) { 
-                    tampilkanGiantModal(tiketWargaSaya.formattedId);
-                }
+                if (jarakAntrean === 3) tampilkanPushNotif(`Giliran Anda tinggal 3 antrean lagi! Silakan bersiap.`);
+                else if (jarakAntrean === 1) tampilkanPushNotif(`🔔 Sisa antrean: 0 orang! Mohon segera bersiap di depan pintu Loket.`);
+                else if (jarakAntrean === 0) tampilkanGiantModal(tiketWargaSaya.formattedId);
             }
         }
 
-        function gotoAuthScreen() { document.getElementById('splash-interface').classList.add('hidden'); document.getElementById('auth-interface').classList.remove('hidden'); }
-        function backToSplash() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
-        function submitLoginWarga() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('warga-interface').classList.remove('hidden'); renderInstansiSesuaiWilayah(); }
-        function logoutWarga() { document.getElementById('warga-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
-
-        function toggleAuthMode() {
-            isSignUpMode = !isSignUpMode;
-            document.getElementById('auth-title').innerText = isSignUpMode ? 'Buat Akun Baru' : 'Login Akun';
-            document.getElementById('auth-subtitle').innerText = isSignUpMode ? 'Lengkapi data untuk daftar.' : 'Silakan masuk untuk mengambil antrean.';
-            document.getElementById('nama-container').classList.toggle('hidden', !isSignUpMode);
-            document.getElementById('btn-login-submit').innerText = isSignUpMode ? 'Daftar Akun' : 'Sign-In';
-            document.getElementById('text-toggle-auth').innerHTML = isSignUpMode ? 'Sudah punya akun? <span class="font-bold underline">Sign-In di sini</span>' : 'Belum punya akun? <span class="font-bold underline">Daftar di sini</span>';
-        }
-
-        function renderInstansiSesuaiWilayah() {
-            let wilayah = document.getElementById('pilihan-wilayah').value;
-            let dropdown = document.getElementById('pilihan-instansi');
-            dropdown.innerHTML = "";
-            instansiPerWilayah[wilayah].forEach(instansi => { dropdown.innerHTML += `<option value="${instansi}">${instansi}</option>`; });
-            updateLivePreviewUI();
-        }
-
+        
         function updateLivePreviewUI() {
             let instansi = document.getElementById('pilihan-instansi').value;
             let data = instansiDatabase[instansi];
@@ -389,87 +362,19 @@
 
             document.getElementById('preview-now').innerText = "A-" + data.nomorSekarang;
             document.getElementById('preview-sisa').innerText = data.listMenunggu.length + " Org";
-            document.getElementById('preview-waktu').innerText = (data.listMenunggu.length * 3) + " Mnt";
+            
+            
+            document.getElementById('preview-waktu').innerText = (data.listMenunggu.length * data.avgTime) + " Mnt";
 
             let btnContainer = document.getElementById('action-antrean-container');
             if(tiketWargaSaya !== null) {
                 btnContainer.innerHTML = `<button disabled class="w-full bg-slate-200 text-slate-500 rounded-2xl p-4 text-[11px] font-bold cursor-not-allowed border border-slate-300">⚠️ Anda memiliki antrean aktif di ${tiketWargaSaya.instansi}</button>`;
+            } else if (data.isTutup) {
+                
+                btnContainer.innerHTML = `<button disabled class="w-full bg-red-100 text-red-500 rounded-2xl p-5 text-sm font-bold cursor-not-allowed border border-red-200 shadow-sm"><i class="fas fa-store-slash mr-2"></i>LOKET SEDANG TUTUP</button>`;
             } else {
                 btnContainer.innerHTML = `<button onclick="ambilAntreanSekarang()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all flex flex-col items-center justify-center gap-1"><span class="text-base font-bold tracking-wide">AMBIL ANTRIAN SEKARANG</span><span class="text-[11px] font-medium text-blue-200">Konfirmasi data & buat tiket</span></button>`;
             }
-        }
-
-        function kembaliKeHomeWarga() {
-            document.getElementById('warga-tiket').classList.add('hidden');
-            document.getElementById('warga-home').classList.remove('hidden');
-            cekStatusAntreanUI();
-        }
-
-        function bukaLayarTiketLagi() {
-            if(tiketWargaSaya) {
-                document.getElementById('warga-home').classList.add('hidden');
-                document.getElementById('warga-tiket').classList.remove('hidden');
-            }
-        }
-
-        function cekStatusAntreanUI() {
-            if(tiketWargaSaya !== null) {
-                document.getElementById('tiket-aktif-container').classList.remove('hidden');
-                document.getElementById('display-tiket-instansi').innerText = tiketWargaSaya.instansi;
-                document.getElementById('display-tiket-aktif').innerText = tiketWargaSaya.formattedId;
-            } else {
-                document.getElementById('tiket-aktif-container').classList.add('hidden');
-            }
-            updateLivePreviewUI();
-        }
-
-        function bukaModalPin() { document.getElementById('pin-modal').classList.remove('hidden'); document.getElementById('pin-input').focus(); }
-        function tutupModalPin() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-input').value = ""; document.getElementById('pin-error').classList.add('hidden'); }
-
-        function validasiPinPetugas() {
-            const inputPin = document.getElementById('pin-input').value.trim().toUpperCase();
-            if (inputPin === "PKJJECO1310") {
-                currentActiveStaffInstansi = "Puskesmas Kebon Jeruk";
-                document.getElementById('dashboard-staff-name').innerText = "Jeco (Puskesmas KB)";
-            } else if (inputPin === "DDKSTAFF9901") {
-                currentActiveStaffInstansi = "Dinas Dukcapil";
-                document.getElementById('dashboard-staff-name').innerText = "Admin (Dukcapil)";
-            } else {
-                document.getElementById('pin-error').classList.remove('hidden'); return;
-            }
-            tutupModalPin();
-            document.getElementById('dashboard-instansi-title').innerText = "Panel Kontrol: " + currentActiveStaffInstansi;
-            document.getElementById('splash-interface').classList.add('hidden');
-            document.getElementById('petugas-interface').classList.remove('hidden');
-            updateDashboardUI();
-        }
-
-        function logoutKeSplash() {
-            document.getElementById('petugas-interface').classList.add('hidden');
-            document.getElementById('splash-interface').classList.remove('hidden');
-        }
-
-        function tampilkanGiantModal(nomor) {
-            const modal = document.getElementById('call-modal');
-            const content = document.getElementById('call-modal-content');
-            document.getElementById('call-modal-nomor').innerText = nomor;
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0'); modal.classList.add('opacity-100');
-                content.classList.remove('scale-0'); content.classList.add('scale-100');
-            }, 50);
-        }
-
-        function konfirmasiKedatangan() {
-            const modal = document.getElementById('call-modal');
-            const content = document.getElementById('call-modal-content');
-            modal.classList.remove('opacity-100'); modal.classList.add('opacity-0');
-            content.classList.remove('scale-100'); content.classList.add('scale-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                tiketWargaSaya = null; 
-                cekStatusAntreanUI();
-            }, 300); 
         }
 
         function updateDashboardUI() {
@@ -480,12 +385,51 @@
             document.getElementById('dash-sisa-antrean').innerText = data.listMenunggu.length;
             document.getElementById('dash-total-dilayani').innerText = data.totalDilayani;
             
+            const btnTutup = document.getElementById('btn-toggle-loket');
+            if(data.isTutup) {
+                btnTutup.innerText = "BUKA LOKET KEMBALI";
+                btnTutup.className = "w-full bg-blue-100 text-blue-600 font-bold text-sm py-3 rounded-xl hover:bg-blue-200 transition-colors";
+            } else {
+                btnTutup.innerText = "TUTUP LOKET SEMENTARA";
+                btnTutup.className = "w-full bg-red-100 text-red-600 font-bold text-sm py-3 rounded-xl hover:bg-red-200 transition-colors";
+            }
+            
             const tbody = document.getElementById('dash-tabel-body');
             tbody.innerHTML = "";
             data.listMenunggu.forEach(item => {
                 tbody.innerHTML += `<tr class="border-b border-slate-100"><td class="p-3 font-bold text-slate-800">${item.id}</td><td class="p-3 text-slate-500">${item.waktu}</td><td class="p-3 text-right"><span class="bg-amber-100 text-amber-600 font-bold text-[10px] px-2.5 py-1 rounded-full">Menunggu</span></td></tr>`;
             });
         }
+
+        
+        function gotoAuthScreen() { document.getElementById('splash-interface').classList.add('hidden'); document.getElementById('auth-interface').classList.remove('hidden'); }
+        function backToSplash() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
+        function logoutWarga() { tiketWargaSaya = null; toggleSidebarWarga(); document.getElementById('warga-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? 'Buat Akun Baru' : 'Login Akun';
+            document.getElementById('auth-subtitle').innerText = isSignUpMode ? 'Lengkapi data untuk daftar.' : 'Gunakan Email: jeco@binus.edu | Pass: 123';
+            document.getElementById('nama-container').classList.toggle('hidden', !isSignUpMode);
+            document.getElementById('btn-login-submit').innerText = isSignUpMode ? 'Daftar Akun' : 'Sign-In';
+            document.getElementById('text-toggle-auth').innerHTML = isSignUpMode ? 'Sudah punya akun? <span class="font-bold underline">Sign-In di sini</span>' : 'Belum punya akun? <span class="font-bold underline">Daftar di sini</span>';
+        }
+        function renderInstansiSesuaiWilayah() {
+            let w = document.getElementById('pilihan-wilayah').value; let d = document.getElementById('pilihan-instansi'); d.innerHTML = "";
+            instansiPerWilayah[w].forEach(i => { d.innerHTML += `<option value="${i}">${i}</option>`; }); updateLivePreviewUI();
+        }
+        function kembaliKeHomeWarga() { document.getElementById('warga-tiket').classList.add('hidden'); document.getElementById('warga-home').classList.remove('hidden'); cekStatusAntreanUI(); }
+        function bukaLayarTiketLagi() { if(tiketWargaSaya) { document.getElementById('warga-home').classList.add('hidden'); document.getElementById('warga-tiket').classList.remove('hidden'); } }
+        function cekStatusAntreanUI() {
+            if(tiketWargaSaya !== null) { document.getElementById('tiket-aktif-container').classList.remove('hidden'); document.getElementById('display-tiket-instansi').innerText = tiketWargaSaya.instansi; document.getElementById('display-tiket-aktif').innerText = tiketWargaSaya.formattedId; } 
+            else { document.getElementById('tiket-aktif-container').classList.add('hidden'); }
+            updateLivePreviewUI();
+        }
+        function bukaModalPin() { document.getElementById('pin-modal').classList.remove('hidden'); document.getElementById('pin-input').focus(); }
+        function tutupModalPin() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-input').value = ""; document.getElementById('pin-error').classList.add('hidden'); }
+        function logoutKeSplash() { document.getElementById('petugas-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); currentActiveStaffInstansi = null; }
+        function tampilkanPushNotif(msg) { document.getElementById('notif-message').innerText = msg; const notif = document.getElementById('push-notification'); notif.classList.remove('translate-x-[150%]'); setTimeout(() => { notif.classList.add('translate-x-[150%]'); }, 5000); }
+        function tampilkanGiantModal(nomor) { const modal = document.getElementById('call-modal'); const content = document.getElementById('call-modal-content'); document.getElementById('call-modal-nomor').innerText = nomor; modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); modal.classList.add('opacity-100'); content.classList.remove('scale-0'); content.classList.add('scale-100'); }, 50); }
+        function konfirmasiKedatangan() { const modal = document.getElementById('call-modal'); const content = document.getElementById('call-modal-content'); modal.classList.remove('opacity-100'); modal.classList.add('opacity-0'); content.classList.remove('scale-100'); content.classList.add('scale-0'); setTimeout(() => { modal.classList.add('hidden'); tiketWargaSaya = null; cekStatusAntreanUI(); }, 300); }
     </script>
 </body>
 </html>
