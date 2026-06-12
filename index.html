@@ -283,10 +283,8 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
-        // Koneksi ke Backend
         const socket = io();
 
-        // State Lokal
         let instansiDatabase = {}; 
         let instansiPerWilayah = {
             "Jakbar": ["Puskesmas Kebon Jeruk", "Kelurahan Kemanggisan", "Dinas Dukcapil"],
@@ -296,18 +294,14 @@
         let tiketWargaSaya = null; 
         let currentActiveStaffInstansi = null; 
 
-        // --- MENDENGARKAN EVENT DARI BACKEND ---
         
-        // 1. Terima update data instansi dari server
         socket.on('updateData', (serverData) => {
             instansiDatabase = serverData;
             
-            // LOGIK BARU PENYELAMAT DROPDOWN BLANK
             if (document.getElementById('pilihan-instansi').innerHTML.trim() === "") {
                 renderInstansiSesuaiWilayah();
             }
             
-            // Refresh UI secara real-time di kedua belah pihak
             if (!document.getElementById('warga-interface').classList.contains('hidden')) {
                 updateLivePreviewUI();
             }
@@ -316,7 +310,6 @@
             }
         });
 
-        // 2. Terima tiket yang berhasil digenerate dari server
         socket.on('tiketDikonfirmasi', (tiketBaru) => {
             tiketWargaSaya = tiketBaru;
             document.getElementById('tiket-nomor-id').innerText = tiketBaru.formattedId;
@@ -326,12 +319,10 @@
             updateLivePreviewUI();
         });
 
-        // 3. Terima trigger ada nomor yang sedang dipanggil petugas
         socket.on('nomorDipanggil', (infoPanggilan) => {
             cekNotifikasiCerdas(infoPanggilan.instansi, infoPanggilan.nomorSekarang);
         });
 
-        // --- FUNGSI WARGA MENGIRIM KE BACKEND ---
         function ambilAntreanSekarang() {
             let instansi = document.getElementById('pilihan-instansi').value;
             let waktuSkrg = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -345,7 +336,6 @@
             cekStatusAntreanUI();
         }
 
-        // --- FUNGSI PETUGAS MENGIRIM KE BACKEND ---
         function panggilAntreanBerikutnya() {
             if (instansiDatabase[currentActiveStaffInstansi].listMenunggu.length > 0) {
                 socket.emit('panggilBerikutnya', currentActiveStaffInstansi);
@@ -354,7 +344,6 @@
             }
         }
 
-        // --- LOGIKA NOTIFIKASI REAL-TIME ---
         function cekNotifikasiCerdas(instansiDipanggil, nomorSekarangInstansi) {
             if (tiketWargaSaya !== null && tiketWargaSaya.instansi === instansiDipanggil) {
                 let jarakAntrean = tiketWargaSaya.idNum - nomorSekarangInstansi;
@@ -371,7 +360,6 @@
             }
         }
 
-        // --- UI UTILITY FUNCTIONS ---
         function gotoAuthScreen() { document.getElementById('splash-interface').classList.add('hidden'); document.getElementById('auth-interface').classList.remove('hidden'); }
         function backToSplash() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
         function submitLoginWarga() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('warga-interface').classList.remove('hidden'); renderInstansiSesuaiWilayah(); }
@@ -417,7 +405,6 @@
             cekStatusAntreanUI();
         }
 
-        /* Perbaikan bug double script */
         function bukaLayarTiketLagi() {
             if(tiketWargaSaya) {
                 document.getElementById('warga-home').classList.add('hidden');
