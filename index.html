@@ -32,7 +32,7 @@
         </div>
         <div>
             <h4 class="text-sm font-bold text-slate-800 mb-1">SmartQueue Reminder</h4>
-            <p id="notif-message" class="text-xs text-slate-500 leading-relaxed">Giliran Anda tinggal 3 antrean lagi! Silakan bersiap menuju area loket.</p>
+            <p id="notif-message" class="text-xs text-slate-500 leading-relaxed"></p>
         </div>
     </div>
 
@@ -81,23 +81,19 @@
             </div>
 
             <div class="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl shadow-sm mb-6">
-                
                 <div id="nama-container" class="hidden mb-3">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Nama Lengkap</label>
                     <input type="text" placeholder="Masukkan nama lengkap" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
                 </div>
-
                 <div class="mb-3">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Email Address</label>
                     <input type="email" placeholder="contoh@email.com" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
                 </div>
-
                 <div class="mb-5">
                     <label class="text-[10px] font-bold text-slate-500 uppercase">Password</label>
                     <input type="password" placeholder="••••••••" class="w-full px-3 py-2 text-sm border-b-2 border-slate-200 bg-transparent focus:border-[#1e3a8a] focus:outline-none transition-colors">
                 </div>
-
-                <button id="btn-login-submit" onclick="submitLoginWarga()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-sm py-3.5 rounded-xl shadow-md transition-all">
+                <button onclick="submitLoginWarga()" id="btn-login-submit" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-sm py-3.5 rounded-xl shadow-md transition-all">
                     Sign-In
                 </button>
             </div>
@@ -121,76 +117,78 @@
         </div>
 
         <div id="warga-home" class="flex-1 flex flex-col p-6 overflow-y-auto relative">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-4">
                 <i class="fas fa-bars text-slate-600 text-lg"></i>
                 <div class="w-8 h-8 rounded-full bg-slate-300 border border-slate-200 overflow-hidden flex items-center justify-center cursor-pointer" onclick="logoutWarga()">
                     <i class="fas fa-user text-slate-500 text-xs"></i>
                 </div>
             </div>
 
-            <div class="mb-8">
+            <div class="mb-6">
                 <h3 class="text-2xl font-bold text-slate-800 tracking-tight">Hello, Jeco</h3>
-                <span class="text-xs text-slate-500">Siap mengambil antrean hari ini? 👋</span>
+                <div class="flex items-center gap-1.5 text-xs font-semibold text-[#1e3a8a] mt-1">
+                    <i class="fas fa-map-marker-alt text-red-500"></i>
+                    <select id="pilihan-wilayah" onchange="renderInstansiSesuaiWilayah()" class="bg-transparent border-none font-bold focus:outline-none cursor-pointer text-[#1e3a8a] underline decoration-dotted">
+                        <option value="Jakbar">Jakarta Barat, Kebon Jeruk</option>
+                        <option value="Jaksel">Jakarta Selatan, Kebayoran Baru</option>
+                    </select>
+                </div>
             </div>
 
             <h4 class="text-sm font-bold text-slate-800 mb-2">1. Pilih Instansi Layanan</h4>
-            <p class="text-[10px] text-slate-500 mb-4">Silakan pilih instansi tujuan Anda untuk mengurus dokumen atau keperluan lainnya.</p>
-            
-            <div class="bg-white border border-slate-200 rounded-xl p-2 shadow-sm mb-8">
-                <select id="pilihan-instansi" class="w-full bg-transparent text-sm font-semibold text-slate-700 py-3 px-2 focus:outline-none cursor-pointer">
-                    <option value="Kelurahan Kemanggisan">🏢 Kelurahan Kemanggisan</option>
-                    <option value="Puskesmas Kebon Jeruk">🏥 Puskesmas Kebon Jeruk</option>
-                    <option value="Dinas Dukcapil">🪪 Dinas Dukcapil</option>
-                    <option value="Samsat Jakarta Barat">🏍️ Samsat Jakarta Barat</option>
+            <div class="bg-white border border-slate-200 rounded-xl p-2 shadow-sm mb-4">
+                <select id="pilihan-instansi" onchange="updateLivePreviewUI()" class="w-full bg-transparent text-sm font-semibold text-slate-700 py-2.5 px-2 focus:outline-none cursor-pointer">
                 </select>
             </div>
 
-            <div id="ambil-antrean-container">
-                <button onclick="ambilAntreanSekarang()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden transition-all flex flex-col items-center justify-center gap-2 group">
-                    <span class="text-lg font-bold tracking-wide">AMBIL ANTRIAN SEKARANG</span>
-                    <span class="text-xs font-medium text-blue-200">Tap to generate ticket</span>
-                    <div class="absolute -right-4 -bottom-4 text-white/10 text-7xl transform group-hover:scale-110 transition-transform">
-                        <i class="fas fa-ticket-alt"></i>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-6">
+                <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4"><i class="fas fa-chart-simple text-[#1e3a8a] mr-1"></i> Live Kondisi Antrean</h5>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <span class="text-[9px] font-medium text-slate-400 block mb-1">Sedang Melayani</span>
+                        <span id="preview-now" class="text-base font-black text-slate-800">A-24</span>
                     </div>
-                </button>
-            </div>
-
-            <div id="tiket-aktif-container" class="hidden">
-                <span class="text-xs font-bold text-[#22c55e] uppercase tracking-wider mb-2 block"><i class="fas fa-circle-dot animate-pulse mr-1"></i> Antrean Sedang Berjalan</span>
-                <div onclick="bukaLayarTiketLagi()" class="w-full bg-white border-2 border-[#1e3a8a] rounded-2xl p-6 shadow-md cursor-pointer hover:bg-slate-50 transition-colors flex justify-between items-center group">
-                    <div>
-                        <h4 class="text-[10px] font-bold text-slate-500 uppercase">Nomor Tiket Anda</h4>
-                        <h1 id="display-tiket-aktif" class="text-4xl font-black text-[#1e3a8a] tracking-tight">A-00</h1>
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <span class="text-[9px] font-medium text-slate-400 block mb-1">Sisa Antrean</span>
+                        <span id="preview-sisa" class="text-base font-black text-amber-500">15 Org</span>
                     </div>
-                    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-[#1e3a8a] group-hover:scale-110 transition-transform">
-                        <i class="fas fa-qrcode text-xl"></i>
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <span class="text-[9px] font-medium text-slate-400 block mb-1">Estimasi Waktu</span>
+                        <span id="preview-waktu" class="text-base font-black text-[#1e3a8a]">45 Mnt</span>
                     </div>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-3 text-center">Tap tiket di atas untuk melihat detail. Anda tidak dapat mengambil antrean baru sampai nomor ini selesai dipanggil.</p>
+            </div>
+
+            <div id="action-antrean-container"></div>
+
+            <div id="tiket-aktif-container" class="hidden mt-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold text-[#22c55e] uppercase tracking-wider block"><i class="fas fa-circle-dot animate-pulse mr-1"></i> Tiket Aktif Anda</span>
+                    <button onclick="batalkanAntreanSaya()" class="text-[11px] text-red-500 hover:text-red-700 font-bold underline"><i class="fas fa-trash-can text-[10px] mr-1"></i>Batalkan Tiket</button>
+                </div>
+                <div onclick="bukaLayarTiketLagi()" class="w-full bg-white border-2 border-[#1e3a8a] rounded-2xl p-5 shadow-md cursor-pointer hover:bg-slate-50 transition-colors flex justify-between items-center group">
+                    <div>
+                        <h4 id="display-tiket-instansi" class="text-[10px] font-bold text-slate-400 uppercase">Puskesmas</h4>
+                        <h1 id="display-tiket-aktif" class="text-4xl font-black text-[#1e3a8a] tracking-tight">A-00</h1>
+                    </div>
+                    <div class="w-11 h-11 bg-blue-50 rounded-full flex items-center justify-center text-[#1e3a8a] group-hover:scale-110 transition-transform">
+                        <i class="fas fa-qrcode text-lg"></i>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div id="warga-tiket" class="hidden flex-1 flex flex-col p-6 justify-center bg-slate-50 relative">
             <button onclick="kembaliKeHomeWarga()" class="absolute top-10 left-6 text-slate-500"><i class="fas fa-arrow-left"></i></button>
-            
             <div class="bg-[#1e3a8a] rounded-t-3xl rounded-b-xl p-8 pt-12 flex flex-col items-center text-center shadow-xl mt-8">
                 <span class="text-xs font-medium text-blue-200 mb-1">Nomor Antrean Anda</span>
                 <h1 id="tiket-nomor-id" class="text-6xl font-black text-white tracking-tight mb-8">A-28</h1>
-                
                 <div class="w-16 h-16 bg-[#22c55e] rounded-full flex items-center justify-center text-white text-2xl shadow-[0_0_20px_rgba(34,197,94,0.4)] mb-4 border-4 border-[#1e3a8a]">
                     <i class="fas fa-check"></i>
                 </div>
-                
                 <h2 id="tiket-instansi-nama" class="text-sm font-bold text-white mb-1">Instansi Terkonfirmasi</h2>
-                <span class="text-xs text-blue-200 mb-6 block">Harap tunggu notifikasi panggilan</span>
-                
-                <div class="w-full bg-blue-950/50 rounded-full h-2 mb-8">
-                    <div class="bg-[#22c55e] h-2 rounded-full w-full"></div>
-                </div>
-
-                <button onclick="kembaliKeHomeWarga()" class="w-full bg-white text-[#1e3a8a] font-bold text-sm py-4 rounded-xl shadow-md hover:bg-slate-100 transition-all">
-                    Kembali ke Halaman Utama
-                </button>
+                <span class="text-xs text-blue-200 mb-6 block">Harap pantau berkala notifikasi HP Anda</span>
+                <button onclick="kembaliKeHomeWarga()" class="w-full bg-white text-[#1e3a8a] font-bold text-sm py-4 rounded-xl shadow-md hover:bg-slate-100 transition-all">Kembali ke Beranda</button>
             </div>
         </div>
     </div>
@@ -199,12 +197,17 @@
     <div id="pin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
         <div class="bg-white rounded-3xl p-8 w-full max-w-sm text-center shadow-2xl">
             <h4 class="text-xl font-bold text-slate-800 mb-2">Login Petugas</h4>
-            <p class="text-xs text-slate-500 mb-6">Masukkan Kode Staff unik Anda (Cth: JECO1305)</p>
+            <p class="text-xs text-slate-500 mb-4">Masukkan Kode Otoritas Instansi Anda.</p>
+            <input type="text" id="pin-input" placeholder="PREFIX + NAMA + ID" class="w-full text-center text-lg font-bold uppercase tracking-widest px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#1e3a8a] focus:outline-none mb-1">
+            <p id="pin-error" class="text-xs text-red-500 font-medium hidden mb-4">Kode Staff tidak valid/ditemukan!</p>
             
-            <input type="text" id="pin-input" placeholder="KODE STAFF" class="w-full text-center text-lg font-bold uppercase tracking-widest px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#1e3a8a] focus:outline-none mb-2">
-            <p id="pin-error" class="text-xs text-red-500 font-medium hidden mb-4">Kode salah! Akses ditolak.</p>
-            
-            <div class="flex gap-3 mt-6">
+            <div class="text-[10px] text-left text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-200 space-y-1 mb-4">
+                <p>💡 Hint Testing Dosen:</p>
+                <p>Puskesmas KB: <strong class="text-[#1e3a8a]">PKJJECO1310</strong></p>
+                <p>Dinas Dukcapil: <strong class="text-[#1e3a8a]">DDKSTAFF9901</strong></p>
+            </div>
+
+            <div class="flex gap-3">
                 <button onclick="tutupModalPin()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold py-3 rounded-xl transition-all">Batal</button>
                 <button onclick="validasiPinPetugas()" class="flex-1 bg-[#1e3a8a] hover:bg-blue-900 text-white text-sm font-bold py-3 rounded-xl shadow transition-all">Masuk</button>
             </div>
@@ -212,75 +215,53 @@
     </div>
 
 
-    <!-- ==================== SCREEN 3: PETUGAS DASHBOARD (DESKTOP INTERFACE) ==================== -->
     <div id="petugas-interface" class="hidden w-full max-w-6xl bg-slate-50 text-slate-800 rounded-[32px] shadow-2xl overflow-hidden h-[720px] flex transition-all duration-300 border border-slate-200">
         <aside class="w-64 bg-[#1e3a8a] flex flex-col">
             <div class="h-20 flex items-center px-6 gap-3 border-b border-blue-800/50">
                 <div class="w-8 h-8 bg-white text-[#1e3a8a] rounded-lg flex items-center justify-center font-black text-sm"><i class="fas fa-layer-group"></i></div>
                 <h1 class="text-base font-bold text-white tracking-wide">SMARTQUEUE</h1>
             </div>
-            
             <div class="p-4 flex flex-col gap-2 flex-1">
-                <span class="text-[10px] font-bold text-blue-300 uppercase px-3 mb-2 mt-2">Loket 1</span>
-                <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold bg-white/10 text-white text-left shadow-sm">
-                    <i class="fas fa-border-all w-4"></i> Dashboard
-                </button>
-                <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/5 hover:text-white text-left transition-colors">
-                    <i class="fas fa-calendar-alt w-4"></i> Loket
-                </button>
-                <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/5 hover:text-white text-left transition-colors">
-                    <i class="fas fa-user w-4"></i> Petugas
-                </button>
+                <span class="text-[10px] font-bold text-blue-300 uppercase px-3 mb-2 mt-2">Otoritas Loket</span>
+                <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold bg-white/10 text-white text-left shadow-sm"><i class="fas fa-border-all w-4"></i> Dashboard</button>
             </div>
-
-            <div class="p-4">
-                <button onclick="logoutKeSplash()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-blue-200 hover:bg-red-500/20 hover:text-red-100 text-left transition-colors">
-                    <i class="fas fa-sign-out-alt w-4"></i> Keluar
-                </button>
-            </div>
+            <div class="p-4"><button onclick="logoutKeSplash()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-blue-200 hover:bg-red-500/20 hover:text-red-100 text-left transition-colors"><i class="fas fa-sign-out-alt w-4"></i> Keluar</button></div>
         </aside>
 
         <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden">
             <header class="h-20 px-8 flex justify-between items-center bg-white border-b border-slate-100">
-                <h2 class="text-xl font-bold text-slate-800 tracking-tight">Loket 1</h2>
-                <div class="flex items-center gap-4 border border-slate-200 py-1.5 px-3 rounded-full bg-white shadow-sm cursor-pointer hover:bg-slate-50">
+                <h2 id="dashboard-instansi-title" class="text-xl font-bold text-slate-800 tracking-tight">Loket Utama</h2>
+                <div class="flex items-center gap-4 border border-slate-200 py-1.5 px-3 rounded-full bg-white shadow-sm">
                     <div class="w-6 h-6 rounded-full bg-[#1e3a8a] text-white flex items-center justify-center text-[10px]"><i class="fas fa-user"></i></div>
-                    <span class="text-xs font-bold text-slate-700 pr-2">Jeco it <i class="fas fa-chevron-down text-[10px] text-slate-400 ml-1"></i></span>
+                    <span id="dashboard-staff-name" class="text-xs font-bold text-slate-700 pr-2">Admin</span>
                 </div>
             </header>
 
             <div class="p-8 flex-1 overflow-y-auto grid grid-cols-3 gap-8">
                 <div class="col-span-2 flex flex-col gap-6">
                     <div class="grid grid-cols-3 gap-6">
-                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                             <span class="text-xs font-semibold text-slate-500 block mb-1">Nomor Saat Ini</span>
-                            <div class="flex items-end gap-2">
-                                <h2 id="dash-nomor-sekarang" class="text-4xl font-black text-slate-800 tracking-tight">A-24</h2>
-                                <span class="text-xs font-bold text-slate-400 mb-1">(Loket 1)</span>
-                            </div>
+                            <h2 id="dash-nomor-sekarang" class="text-4xl font-black text-slate-800 tracking-tight">-</h2>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                             <span class="text-xs font-semibold text-slate-500 block mb-1">Sisa Antrean</span>
-                            <h2 id="dash-sisa-antrean" class="text-4xl font-black text-slate-800 tracking-tight">15</h2>
+                            <h2 id="dash-sisa-antrean" class="text-4xl font-black text-slate-800 tracking-tight">-</h2>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                             <span class="text-xs font-semibold text-slate-500 block mb-1">Total Dilayani</span>
-                            <h2 id="dash-total-dilayani" class="text-4xl font-black text-slate-800 tracking-tight">87</h2>
+                            <h2 id="dash-total-dilayani" class="text-4xl font-black text-slate-800 tracking-tight">-</h2>
                         </div>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                            <h4 class="text-sm font-bold text-slate-800">Antrean Berjalan</h4>
-                            <span class="text-xs font-medium text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-slate-50">Recent Tickets <i class="fas fa-chevron-down text-[10px]"></i></span>
-                        </div>
+                        <div class="px-6 py-4 border-b border-slate-100"><h4 class="text-sm font-bold text-slate-800">Antrean Berjalan Berdasarkan Instansi</h4></div>
                         <div class="flex-1 overflow-y-auto p-4">
                             <table class="w-full text-left border-collapse text-sm">
                                 <thead>
                                     <tr class="text-xs text-slate-400 font-semibold border-b border-slate-100">
                                         <th class="p-3 pb-4">A. ID</th>
-                                        <th class="p-3 pb-4">Name / Instansi</th>
-                                        <th class="p-3 pb-4">Time</th>
+                                        <th class="p-3 pb-4">Waktu Masuk</th>
                                         <th class="p-3 pb-4 text-right">Status</th>
                                     </tr>
                                 </thead>
@@ -290,34 +271,9 @@
                     </div>
                 </div>
 
-                <div class="col-span-1 flex flex-col gap-6">
-                    <button class="self-end bg-[#1e3a8a] text-white text-[10px] font-bold px-3 py-1.5 rounded-md flex items-center gap-1.5 mb-2 hover:bg-blue-900 transition-colors">
-                        <i class="fas fa-plus"></i> Professional
-                    </button>
-
-                    <div class="flex flex-col gap-3">
-                        <button onclick="panggilAntreanBerikutnya()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold text-sm py-4 rounded-xl shadow-[0_8px_15px_rgba(34,197,94,0.2)] transition-all">
-                            PANGGIL ANTRIAN BERIKUTNYA
-                        </button>
-                        <button class="w-full bg-emerald-100/50 border border-[#22c55e]/20 text-emerald-600 hover:bg-emerald-100 font-bold text-sm py-4 rounded-xl transition-all">
-                            LOKET IS SEMENTARA TUTUP
-                        </button>
-                        <button class="w-full bg-emerald-100/50 border border-[#22c55e]/20 text-emerald-600 hover:bg-emerald-100 font-bold text-sm py-4 rounded-xl transition-all">
-                            LEWATI ANTRIAN
-                        </button>
-                    </div>
-
-                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm mt-auto flex flex-col h-64">
-                        <h4 class="text-sm font-bold text-slate-800 mb-4">Analisis Efisiensi Hari Ini</h4>
-                        <div class="flex-1 w-full bg-slate-50 rounded-xl relative overflow-hidden border border-slate-100 flex items-end">
-                            <svg viewBox="0 0 100 50" class="w-full h-full text-[#1e3a8a] opacity-80" preserveAspectRatio="none">
-                                <path d="M0,50 L0,30 Q10,10 20,25 T40,20 T60,35 T80,10 T100,25 L100,50 Z" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-width="1.5"></path>
-                            </svg>
-                        </div>
-                        <div class="flex justify-between text-[10px] text-slate-400 mt-2 font-medium px-2">
-                            <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span>
-                        </div>
-                    </div>
+                <div class="col-span-1 flex flex-col gap-4">
+                    <button onclick="panggilAntreanBerikutnya()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold text-sm py-4 rounded-xl shadow-[0_8px_15px_rgba(34,197,94,0.2)] transition-all">PANGGIL ANTRIAN BERIKUTNYA</button>
+                    <button class="w-full bg-emerald-100/50 text-emerald-600 font-bold text-sm py-3 rounded-xl">LOKET IS SEMENTARA TUTUP</button>
                 </div>
             </div>
         </main>
@@ -325,74 +281,101 @@
 
 
     <script>
+        let instansiDatabase = {
+            "Puskesmas Kebon Jeruk": { nomorSekarang: 24, totalDilayani: 87, listMenunggu: [{id:"A-25", waktu:"10:00 AM"}, {id:"A-26", waktu:"10:05 AM"}] },
+            "Kelurahan Kemanggisan": { nomorSekarang: 12, totalDilayani: 45, listMenunggu: [{id:"A-13", waktu:"09:12 AM"}] },
+            "Dinas Dukcapil": { nomorSekarang: 5, totalDilayani: 22, listMenunggu: [{id:"A-6", waktu:"08:30 AM"}, {id:"A-7", waktu:"08:42 AM"}, {id:"A-8", waktu:"08:50 AM"}] },
+            "Puskesmas Kebayoran Baru": { nomorSekarang: 4, totalDilayani: 12, listMenunggu: [] },
+            "Dukcapil Jakarta Selatan": { nomorSekarang: 33, totalDilayani: 112, listMenunggu: [{id:"A-34", waktu:"11:15 AM"}] }
+        };
+
+        let instansiPerWilayah = {
+            "Jakbar": ["Puskesmas Kebon Jeruk", "Kelurahan Kemanggisan", "Dinas Dukcapil"],
+            "Jaksel": ["Puskesmas Kebayoran Baru", "Dukcapil Jakarta Selatan"]
+        };
+
         let isSignUpMode = false;
-        let nomorSekarang = 24;
-        let totalDilayani = 87;
-        let listMenungguPanggilan = [
-            { id: "A-25", layanan: "Dinas Dukcapil", waktu: "08:00 AM", status: "Menunggu" },
-            { id: "A-26", layanan: "Samsat Jakarta Barat", waktu: "08:05 AM", status: "Menunggu" },
-            { id: "A-27", layanan: "Kelurahan Kemanggisan", waktu: "08:10 AM", status: "Menunggu" }
-        ];
-        
-        let nomorTiketWargaSaya = null; 
-        let stringTiketWargaAktif = null;
+        let tiketWargaSaya = null; 
+        let currentActiveStaffInstansi = null; 
 
-        function gotoAuthScreen() {
-            document.getElementById('splash-interface').classList.add('hidden');
-            document.getElementById('auth-interface').classList.remove('hidden');
-        }
-
-        function backToSplash() {
-            document.getElementById('auth-interface').classList.add('hidden');
-            document.getElementById('splash-interface').classList.remove('hidden');
-        }
+        function gotoAuthScreen() { document.getElementById('splash-interface').classList.add('hidden'); document.getElementById('auth-interface').classList.remove('hidden'); }
+        function backToSplash() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
+        function submitLoginWarga() { document.getElementById('auth-interface').classList.add('hidden'); document.getElementById('warga-interface').classList.remove('hidden'); renderInstansiSesuaiWilayah(); }
+        function logoutWarga() { document.getElementById('warga-interface').classList.add('hidden'); document.getElementById('splash-interface').classList.remove('hidden'); }
 
         function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
-            if(isSignUpMode) {
-                document.getElementById('auth-title').innerText = 'Buat Akun Baru';
-                document.getElementById('auth-subtitle').innerText = 'Lengkapi data diri Anda untuk melanjutkan.';
-                document.getElementById('nama-container').classList.remove('hidden');
-                document.getElementById('btn-login-submit').innerText = 'Daftar Akun';
-                document.getElementById('text-toggle-auth').innerHTML = 'Sudah punya akun? <span class="font-bold underline">Sign-In di sini</span>';
+            document.getElementById('auth-title').innerText = isSignUpMode ? 'Buat Akun Baru' : 'Login Akun';
+            document.getElementById('auth-subtitle').innerText = isSignUpMode ? 'Lengkapi data untuk daftar.' : 'Silakan masuk untuk mengambil antrean.';
+            document.getElementById('nama-container').classList.toggle('hidden', !isSignUpMode);
+            document.getElementById('btn-login-submit').innerText = isSignUpMode ? 'Daftar Akun' : 'Sign-In';
+            document.getElementById('text-toggle-auth').innerHTML = isSignUpMode ? 'Sudah punya akun? <span class="font-bold underline">Sign-In di sini</span>' : 'Belum punya akun? <span class="font-bold underline">Daftar di sini</span>';
+        }
+
+        function renderInstansiSesuaiWilayah() {
+            let wilayah = document.getElementById('pilihan-wilayah').value;
+            let dropdown = document.getElementById('pilihan-instansi');
+            dropdown.innerHTML = "";
+            
+            instansiPerWilayah[wilayah].forEach(instansi => {
+                dropdown.innerHTML += `<option value="${instansi}">${instansi}</option>`;
+            });
+            updateLivePreviewUI();
+        }
+
+        function updateLivePreviewUI() {
+            let instansi = document.getElementById('pilihan-instansi').value;
+            let data = instansiDatabase[instansi];
+            
+            if(!data) return;
+
+            document.getElementById('preview-now').innerText = "A-" + data.nomorSekarang;
+            document.getElementById('preview-sisa').innerText = data.listMenunggu.length + " Org";
+            document.getElementById('preview-waktu').innerText = (data.listMenunggu.length * 3) + " Mnt";
+
+            let btnContainer = document.getElementById('action-antrean-container');
+            if(tiketWargaSaya !== null) {
+                btnContainer.innerHTML = `
+                    <button disabled class="w-full bg-slate-200 text-slate-500 rounded-2xl p-4 text-[11px] font-bold cursor-not-allowed border border-slate-300">
+                        ⚠️ Anda memiliki antrean aktif di ${tiketWargaSaya.instansi}
+                    </button>`;
             } else {
-                document.getElementById('auth-title').innerText = 'Login Akun';
-                document.getElementById('auth-subtitle').innerText = 'Silakan masuk untuk mengambil antrean.';
-                document.getElementById('nama-container').classList.add('hidden');
-                document.getElementById('btn-login-submit').innerText = 'Sign-In';
-                document.getElementById('text-toggle-auth').innerHTML = 'Belum punya akun? <span class="font-bold underline">Daftar di sini</span>';
+                btnContainer.innerHTML = `
+                    <button onclick="ambilAntreanSekarang()" class="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all flex flex-col items-center justify-center gap-1">
+                        <span class="text-base font-bold tracking-wide">AMBIL ANTRIAN SEKARANG</span>
+                        <span class="text-[11px] font-medium text-blue-200">Konfirmasi data & buat tiket</span>
+                    </button>`;
             }
         }
 
-        function submitLoginWarga() {
-            document.getElementById('auth-interface').classList.add('hidden');
-            document.getElementById('warga-interface').classList.remove('hidden');
-            cekStatusAntreanUI();
-        }
-
-        function logoutWarga() {
-            document.getElementById('warga-interface').classList.add('hidden');
-            document.getElementById('splash-interface').classList.remove('hidden');
-        }
-
         function ambilAntreanSekarang() {
-            let instansiDipilih = document.getElementById('pilihan-instansi').value;
-            let nextIdNum = nomorSekarang + 1 + listMenungguPanggilan.length;
+            let instansi = document.getElementById('pilihan-instansi').value;
+            let data = instansiDatabase[instansi];
+            
+            let nextIdNum = data.nomorSekarang + 1 + data.listMenunggu.length;
             let formattedId = "A-" + nextIdNum;
-            
-            nomorTiketWargaSaya = nextIdNum; 
-            stringTiketWargaAktif = formattedId;
-            
             let waktuSkrg = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            listMenungguPanggilan.push({ id: formattedId, layanan: instansiDipilih, waktu: waktuSkrg, status: "Menunggu" });
+            
+            data.listMenunggu.push({ id: formattedId, waktu: waktuSkrg });
+            tiketWargaSaya = { instansi: instansi, idNum: nextIdNum, formattedId: formattedId };
             
             document.getElementById('tiket-nomor-id').innerText = formattedId;
-            document.getElementById('tiket-instansi-nama').innerText = instansiDipilih;
-            
+            document.getElementById('tiket-instansi-nama').innerText = instansi;
             document.getElementById('warga-home').classList.add('hidden');
             document.getElementById('warga-tiket').classList.remove('hidden');
             
-            updateDashboardUI();
+            updateLivePreviewUI();
+        }
+
+        function batalkanAntreanSaya() {
+            if(!tiketWargaSaya) return;
+            
+            let data = instansiDatabase[tiketWargaSaya.instansi];
+            data.listMenunggu = data.listMenunggu.filter(item => item.id !== tiketWargaSaya.formattedId);
+            
+            tiketWargaSaya = null;
+            cekStatusAntreanUI();
+            alert("Berhasil! Antrean Anda telah dibatalkan.");
         }
 
         function kembaliKeHomeWarga() {
@@ -402,80 +385,78 @@
         }
 
         function bukaLayarTiketLagi() {
-            document.getElementById('warga-home').classList.add('hidden');
-            document.getElementById('warga-tiket').classList.remove('hidden');
+            if(tiketWargaSaya) {
+                document.getElementById('warga-home').classList.add('hidden');
+                document.getElementById('warga-tiket').classList.remove('hidden');
+            }
         }
 
         function cekStatusAntreanUI() {
-            if(nomorTiketWargaSaya !== null) {
-                document.getElementById('ambil-antrean-container').classList.add('hidden');
+            if(tiketWargaSaya !== null) {
                 document.getElementById('tiket-aktif-container').classList.remove('hidden');
-                document.getElementById('display-tiket-aktif').innerText = stringTiketWargaAktif;
+                document.getElementById('display-tiket-instansi').innerText = tiketWargaSaya.instansi;
+                document.getElementById('display-tiket-aktif').innerText = tiketWargaSaya.formattedId;
             } else {
-                document.getElementById('ambil-antrean-container').classList.remove('hidden');
                 document.getElementById('tiket-aktif-container').classList.add('hidden');
             }
+            updateLivePreviewUI();
         }
 
 
-        function bukaModalPin() {
-            document.getElementById('pin-modal').classList.remove('hidden');
-            document.getElementById('pin-input').focus();
-        }
-
-        function tutupModalPin() {
-            document.getElementById('pin-modal').classList.add('hidden');
-            document.getElementById('pin-input').value = "";
-            document.getElementById('pin-error').classList.add('hidden');
-        }
+        function bukaModalPin() { document.getElementById('pin-modal').classList.remove('hidden'); document.getElementById('pin-input').focus(); }
+        function tutupModalPin() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-input').value = ""; document.getElementById('pin-error').classList.add('hidden'); }
 
         function validasiPinPetugas() {
             const inputPin = document.getElementById('pin-input').value.trim().toUpperCase();
-            if (inputPin === "JECO1305") {
-                tutupModalPin();
-                document.getElementById('splash-interface').classList.add('hidden');
-                document.getElementById('petugas-interface').classList.remove('hidden');
-                updateDashboardUI();
+            
+            if (inputPin === "PKJJECO1310") {
+                currentActiveStaffInstansi = "Puskesmas Kebon Jeruk";
+                document.getElementById('dashboard-staff-name').innerText = "Jeco (Puskesmas KB)";
+            } else if (inputPin === "DDKSTAFF9901") {
+                currentActiveStaffInstansi = "Dinas Dukcapil";
+                document.getElementById('dashboard-staff-name').innerText = "Admin (Dukcapil)";
             } else {
                 document.getElementById('pin-error').classList.remove('hidden');
+                return;
             }
-        }
 
-        document.getElementById('pin-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') validasiPinPetugas();
-        });
+            tutupModalPin();
+            document.getElementById('dashboard-instansi-title').innerText = "Panel Kontrol: " + currentActiveStaffInstansi;
+            document.getElementById('splash-interface').classList.add('hidden');
+            document.getElementById('petugas-interface').classList.remove('hidden');
+            updateDashboardUI();
+        }
 
         function logoutKeSplash() {
             document.getElementById('petugas-interface').classList.add('hidden');
             document.getElementById('splash-interface').classList.remove('hidden');
         }
 
-
         function panggilAntreanBerikutnya() {
-            if (listMenungguPanggilan.length > 0) {
-                let antreanDipanggil = listMenungguPanggilan.shift();
-                nomorSekarang = parseInt(antreanDipanggil.id.split("-")[1]);
-                totalDilayani++;
+            let data = instansiDatabase[currentActiveStaffInstansi];
+            if (data.listMenunggu.length > 0) {
+                let antreanDipanggil = data.listMenunggu.shift();
+                data.nomorSekarang = parseInt(antreanDipanggil.id.split("-")[1]);
+                data.totalDilayani++;
                 
                 updateDashboardUI();
-                cekNotifikasiCerdas(); 
+                cekNotifikasiCerdas(data.nomorSekarang); 
             } else {
-                alert("Tidak ada antrean warga yang menunggu!");
+                alert("Tidak ada antrean warga yang menunggu di instansi ini!");
             }
         }
 
-        function cekNotifikasiCerdas() {
-            if (nomorTiketWargaSaya !== null) {
-                let jarakAntrean = nomorTiketWargaSaya - nomorSekarang;
+        function cekNotifikasiCerdas(nomorSekarangInstansi) {
+            if (tiketWargaSaya !== null && tiketWargaSaya.instansi === currentActiveStaffInstansi) {
+                let jarakAntrean = tiketWargaSaya.idNum - nomorSekarangInstansi;
                 
                 if (jarakAntrean === 3) {
-                    tampilkanPushNotif(`Giliran Anda (A-${nomorTiketWargaSaya}) tinggal 3 antrean lagi! Silakan bersiap.`);
+                    tampilkanPushNotif(`Giliran Anda di ${tiketWargaSaya.instansi} tinggal 3 antrean lagi!`);
                 } 
                 else if (jarakAntrean === 0) {
-                    tampilkanPushNotif(`PANGGILAN: Nomor A-${nomorTiketWargaSaya} silakan menuju Loket 1 sekarang!`);
-                    nomorTiketWargaSaya = null; 
-                    stringTiketWargaAktif = null;
-                    cekStatusAntreanUI(); 
+                    tampilkanPushNotif(`PANGGILAN: Nomor ${tiketWargaSaya.formattedId} silakan masuk ke Loket Utama sekarang!`);
+                    tiketWargaSaya = null; // Menghapus tiket setelah dipanggil
+                    cekStatusAntreanUI();
                 }
             }
         }
@@ -483,44 +464,30 @@
         function tampilkanPushNotif(pesan) {
             const notif = document.getElementById('push-notification');
             document.getElementById('notif-message').innerText = pesan;
-            
             notif.classList.remove('translate-x-[150%]');
-            setTimeout(() => {
-                notif.classList.add('translate-x-[150%]');
-            }, 6000);
+            setTimeout(() => { notif.classList.add('translate-x-[150%]'); }, 6000);
         }
 
-        // --- Render UI Dashboard ---
         function updateDashboardUI() {
-            document.getElementById('dash-nomor-sekarang').innerText = "A-" + nomorSekarang;
-            document.getElementById('dash-sisa-antrean').innerText = listMenungguPanggilan.length;
-            document.getElementById('dash-total-dilayani').innerText = totalDilayani;
+            if(!currentActiveStaffInstansi) return;
+            let data = instansiDatabase[currentActiveStaffInstansi];
+            
+            document.getElementById('dash-nomor-sekarang').innerText = "A-" + data.nomorSekarang;
+            document.getElementById('dash-sisa-antrean').innerText = data.listMenunggu.length;
+            document.getElementById('dash-total-dilayani').innerText = data.totalDilayani;
             
             const tbody = document.getElementById('dash-tabel-body');
             tbody.innerHTML = "";
             
-            tbody.innerHTML += `
-                <tr class="border-b border-slate-50">
-                    <td class="p-3 font-bold text-slate-800">A-${nomorSekarang}</td>
-                    <td class="p-3 text-slate-600 flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[8px]"><i class="fas fa-user text-slate-400"></i></div> Jeco</td>
-                    <td class="p-3 text-slate-500">Sekarang</td>
-                    <td class="p-3 text-right"><span class="bg-[#22c55e]/10 text-[#22c55e] font-bold text-[10px] px-2.5 py-1 rounded-full"><i class="fas fa-circle text-[8px] mr-1"></i> Melayani</span></td>
-                </tr>
-            `;
-
-            listMenungguPanggilan.forEach(item => {
+            data.listMenunggu.forEach(item => {
                 tbody.innerHTML += `
-                    <tr class="border-b border-slate-50 opacity-60">
+                    <tr class="border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-800">${item.id}</td>
-                        <td class="p-3 text-slate-600 flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[8px]"><i class="fas fa-user text-slate-300"></i></div> ${item.layanan}</td>
                         <td class="p-3 text-slate-500">${item.waktu}</td>
                         <td class="p-3 text-right"><span class="bg-amber-100 text-amber-600 font-bold text-[10px] px-2.5 py-1 rounded-full">Menunggu</span></td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         }
-        
-        updateDashboardUI();
     </script>
 </body>
 </html>
