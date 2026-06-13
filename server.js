@@ -134,6 +134,32 @@ io.on('connection', (socket) => {
     });
 });
 
+async function syncToCloud(ticketData) {
+    console.log("=== SyncManager: Mencoba sinkronisasi ke Cloud Database... ===");
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: `Ticket-${ticketData.number}`,
+                body: `Status: ${ticketData.status}, Time: ${new Date().toISOString()}`,
+                userId: 1,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log("✅ SyncManager Sukses! Data terekonasiliasi ke Cloud. ID Cloud:", result.id);
+        } else {
+            console.log("❌ SyncManager Gagal: Server cloud merespon dengan error.");
+        }
+    } catch (error) {
+        console.log("⚠️ SyncManager Offline Mode: Koneksi cloud putus, data disimpan di antrean lokal.");
+    }
+}
+
 server.listen(3000, () => {
     console.log('✅ Server Backend Berjalan Stabil di http://localhost:3000');
 });

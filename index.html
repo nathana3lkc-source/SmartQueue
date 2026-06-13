@@ -25,7 +25,7 @@
     <div id="call-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex justify-center items-center z-[200] p-4 transition-opacity duration-300 opacity-0">
         <div id="call-modal-content" class="bg-white rounded-[32px] p-8 w-full max-w-sm text-center shadow-2xl transform transition-transform duration-500 scale-0 border-8 border-[#1e3a8a]">
             <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center text-red-500 mx-auto mb-4 animate-bounce"><i class="fas fa-bullhorn text-4xl"></i></div>
-            <span class="text-red-500 font-bold tracking-widest text-xs uppercase mb-1 block">🚨 Peringatan Utama 🚨</span>
+            <span class="text-red-500 font-bold tracking-widest text-xs uppercase mb-1 block">Peringatan Utama</span>
             <h2 class="text-3xl font-black text-slate-800 mb-2 leading-tight">SEKARANG<br>ANTREAN KAMU!</h2>
             <div class="bg-slate-50 py-4 border border-slate-100 rounded-2xl my-5 shadow-inner">
                 <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Nomor Panggilan</span>
@@ -468,7 +468,7 @@
 
             let btnContainer = document.getElementById('action-antrean-container');
             if(tiketWargaSaya !== null) {
-                btnContainer.innerHTML = `<button disabled class="w-full bg-slate-200 text-slate-500 rounded-2xl p-4 text-[11px] font-bold cursor-not-allowed border border-slate-300">⚠️ Anda memiliki antrean aktif di ${tiketWargaSaya.instansi}</button>`;
+                btnContainer.innerHTML = `<button disabled class="w-full bg-slate-200 text-slate-500 rounded-2xl p-4 text-[11px] font-bold cursor-not-allowed border border-slate-300">Anda memiliki antrean aktif di ${tiketWargaSaya.instansi}</button>`;
             } else if (data.isTutup) {
                 btnContainer.innerHTML = `<button disabled class="w-full bg-red-100 text-red-500 rounded-2xl p-5 text-sm font-bold cursor-not-allowed border border-red-200 shadow-sm"><i class="fas fa-store-slash mr-2"></i>LOKET SEDANG TUTUP</button>`;
             } else {
